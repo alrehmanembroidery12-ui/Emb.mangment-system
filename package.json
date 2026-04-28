@@ -1,0 +1,13 @@
+{
+  "name": "embroidery-saas-root",
+  "version": "1.0.0",
+  "description": "Root folder for Embroidery SaaS",
+  "scripts": {
+    "frontend": "npm run dev --prefix embroidery-saas/frontend",
+    "backend": "npm run dev --prefix embroidery-saas/backend",
+    "dev": "concurrently \"npm run frontend\" \"npm run backend\""
+  },
+  "dependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
