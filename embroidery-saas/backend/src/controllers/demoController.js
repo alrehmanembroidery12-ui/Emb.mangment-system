@@ -1,11 +1,7 @@
 const db = require('../config/db');
 
 exports.resetDemoData = async (req, res) => {
-  const { factory_id, is_demo } = req.user;
-
-  if (!is_demo) {
-    return res.status(403).json({ message: 'Reset functionality is only available for demo accounts.' });
-  }
+  const { factory_id } = req.user;
 
   try {
     // Start Transaction

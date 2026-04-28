@@ -34,22 +34,22 @@ const TopBar = () => {
 
       {/* Notifications and Profile */}
       <div className="flex items-center space-x-6">
-        {user?.is_demo && (
-          <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-2">
+           {user?.is_demo && (
              <span className="flex items-center px-3 py-1 rounded-full bg-amber-500/20 text-amber-500 border border-amber-500/50 text-xs font-bold animate-pulse">
                <AlertCircle size={14} className="mr-1" />
                DEMO ACCOUNT
              </span>
-             <button 
-               onClick={handleResetDemo}
-               className="flex items-center px-3 py-1 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white border border-gray-700 transition-all text-xs"
-               title="Reset Demo Data"
-             >
-               <RefreshCcw size={14} className="mr-1" />
-               Reset
-             </button>
-          </div>
-        )}
+           )}
+           <button 
+             onClick={handleResetDemo}
+             className="flex items-center px-3 py-1 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white border border-gray-700 transition-all text-xs"
+             title="Reset Data"
+           >
+             <RefreshCcw size={14} className="mr-1" />
+             Reset Data
+           </button>
+        </div>
 
         <button className="relative text-gray-400 hover:text-white transition-colors">
           <Bell size={20} />

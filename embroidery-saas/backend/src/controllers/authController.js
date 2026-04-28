@@ -69,12 +69,14 @@ exports.login = async (req, res) => {
     const user = result.rows[0];
 
     if (!user) {
-      return res.status(400).json({ message: 'Invalid Credentials' });
+      console.log('Login failed: User not found:', email);
+      return res.status(400).json({ message: 'User not found. Please register first.' });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(400).json({ message: 'Invalid Credentials' });
+      console.log('Login failed: Password mismatch for:', email);
+      return res.status(400).json({ message: 'Incorrect password. Please try again.' });
     }
 
     const token = jwt.sign(
