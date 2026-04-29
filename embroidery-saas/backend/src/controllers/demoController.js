@@ -57,10 +57,10 @@ exports.resetDemoData = async (req, res) => {
       
       // Add some varied transactions for each worker
       if (i < 10) {
-          await db.query('INSERT INTO worker_transactions (factory_id, worker_id, amount, transaction_type, description) VALUES ($1, $2, $3, $4, $5)', 
-            [factory_id, res.rows[0].id, 2000 + (i * 100), 'Credit', 'Performance Bonus']);
-          await db.query('INSERT INTO worker_transactions (factory_id, worker_id, amount, transaction_type, description) VALUES ($1, $2, $3, $4, $5)', 
-            [factory_id, res.rows[0].id, 5000, 'Debit', 'Salary Advance']);
+          await db.query('INSERT INTO worker_transactions (factory_id, worker_id, amount, transaction_type, description, credit, debit) VALUES ($1, $2, $3, $4, $5, $6, $7)', 
+            [factory_id, res.rows[0].id, 2000 + (i * 100), 'Credit', 'Performance Bonus', 2000 + (i * 100), 0]);
+          await db.query('INSERT INTO worker_transactions (factory_id, worker_id, amount, transaction_type, description, credit, debit) VALUES ($1, $2, $3, $4, $5, $6, $7)', 
+            [factory_id, res.rows[0].id, 5000, 'Debit', 'Salary Advance', 0, 5000]);
       }
     }
 
@@ -93,8 +93,8 @@ exports.resetDemoData = async (req, res) => {
     ];
     for (const e of ledger) {
         await db.query(
-            'INSERT INTO client_transactions (factory_id, client_id, amount, transaction_type, description) VALUES ($1, $2, $3, $4, $5)',
-            [factory_id, mainClientId, e.amount, e.type, e.desc]
+            'INSERT INTO client_transactions (factory_id, client_id, amount, transaction_type, description, credit, debit) VALUES ($1, $2, $3, $4, $5, $6, $7)',
+            [factory_id, mainClientId, e.amount, e.type, e.desc, e.type === 'Credit' ? e.amount : 0, e.type === 'Debit' ? e.amount : 0]
         );
     }
 
@@ -137,8 +137,8 @@ exports.resetDemoData = async (req, res) => {
         const orderId = orderRes.rows[0].id;
 
         // Add to Ledger (Debit)
-        await db.query('INSERT INTO client_transactions (factory_id, client_id, amount, transaction_type, description) VALUES ($1, $2, $3, $4, $5)',
-            [factory_id, cId, price, 'Debit', `Invoice for Order ORD-D${ts}-${i}`]);
+        await db.query('INSERT INTO client_transactions (factory_id, client_id, amount, transaction_type, description, debit) VALUES ($1, $2, $3, $4, $5, $6)',
+            [factory_id, cId, price, 'Debit', `Invoice for Order ORD-D${ts}-${i}`, price]);
 
         // Create Invoice
         const invRes = await db.query(
@@ -152,8 +152,8 @@ exports.resetDemoData = async (req, res) => {
         await db.query('INSERT INTO payments (factory_id, invoice_id, amount, payment_method) VALUES ($1, $2, $3, $4)',
             [factory_id, invoiceId, payAmount, 'Bank Transfer']);
         
-        await db.query('INSERT INTO client_transactions (factory_id, client_id, amount, transaction_type, description) VALUES ($1, $2, $3, $4, $5)',
-            [factory_id, cId, payAmount, 'Credit', `Payment for Invoice INV-D${ts}-${i}`]);
+        await db.query('INSERT INTO client_transactions (factory_id, client_id, amount, transaction_type, description, credit) VALUES ($1, $2, $3, $4, $5, $6)',
+            [factory_id, cId, payAmount, 'Credit', `Payment for Invoice INV-D${ts}-${i}`, payAmount]);
     }
 
     // Commit
