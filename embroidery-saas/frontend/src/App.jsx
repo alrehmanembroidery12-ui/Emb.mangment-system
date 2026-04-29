@@ -10,16 +10,9 @@ import Inventory from './pages/Inventory';
 import Billing from './pages/Billing';
 import Layout from './components/Layout';
 
-// Protected Route Component
 const ProtectedRoute = ({ children }) => {
-  const { token, loading } = useAuth();
-  
-  if (loading) return <div className="min-h-screen bg-gray-900 flex items-center justify-center text-white">Loading...</div>;
-  
-  if (!token) {
-    return <Navigate to="/login" />;
-  }
-
+  const { token } = useAuth();
+  if (!token) return <Navigate to="/login" replace />;
   return children;
 };
 
@@ -31,46 +24,22 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route 
-            path="/dashboard" 
+            path="/*" 
             element={
               <ProtectedRoute>
-                <Layout><Dashboard /></Layout>
+                <Layout>
+                  <Routes>
+                    <Route path="dashboard" element={<Dashboard />} />
+                    <Route path="workers" element={<Workers />} />
+                    <Route path="orders" element={<Orders />} />
+                    <Route path="inventory" element={<Inventory />} />
+                    <Route path="billing" element={<Billing />} />
+                    <Route path="/" element={<Navigate to="/dashboard" replace />} />
+                  </Routes>
+                </Layout>
               </ProtectedRoute>
             } 
           />
-          <Route 
-            path="/workers" 
-            element={
-              <ProtectedRoute>
-                <Layout><Workers /></Layout>
-              </ProtectedRoute>
-            } 
-          />
-          <Route 
-            path="/orders" 
-            element={
-              <ProtectedRoute>
-                <Layout><Orders /></Layout>
-              </ProtectedRoute>
-            } 
-          />
-          <Route 
-            path="/inventory" 
-            element={
-              <ProtectedRoute>
-                <Layout><Inventory /></Layout>
-              </ProtectedRoute>
-            } 
-          />
-          <Route 
-            path="/billing" 
-            element={
-              <ProtectedRoute>
-                <Layout><Billing /></Layout>
-              </ProtectedRoute>
-            } 
-          />
-          <Route path="/" element={<Navigate to="/dashboard" />} />
         </Routes>
       </Router>
     </AuthProvider>
