@@ -31,7 +31,7 @@ app.use(helmet({
 })); 
 app.use(morgan('dev')); 
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+  origin: true, // Allow all origins for debugging
   credentials: true
 }));
 app.use(express.json());
@@ -63,7 +63,7 @@ const frontendBuildPath = path.join(__dirname, '../frontend/dist');
 app.use(express.static(frontendBuildPath));
 
 // Catch-all route to serve index.html for any request that doesn't match an API route
-app.get('*', (req, res) => {
+app.get('(.*)', (req, res) => {
   if (req.path.startsWith('/api')) {
     return res.status(404).json({ message: 'API route not found' });
   }
