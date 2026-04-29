@@ -9,12 +9,21 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    console.log('AuthProvider: Token effect running', { token: !!token });
     if (token) {
-      const storedUser = JSON.parse(localStorage.getItem('user'));
-      if (storedUser) setUser(storedUser);
+      try {
+        const storedUser = JSON.parse(localStorage.getItem('user'));
+        if (storedUser) {
+           setUser(prev => JSON.stringify(prev) === JSON.stringify(storedUser) ? prev : storedUser);
+        }
+      } catch (e) {
+        console.error('Error parsing stored user', e);
+      }
     }
     setLoading(false);
   }, [token]);
+
+  console.log('AuthProvider: Rendering', { user: !!user, loading });
 
   const login = async (email, password) => {
     try {

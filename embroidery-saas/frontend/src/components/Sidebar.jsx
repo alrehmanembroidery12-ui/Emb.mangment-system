@@ -50,7 +50,10 @@ const Sidebar = () => {
       {/* Quick Action Section */}
       <div className="p-4 bg-gray-800/50 m-4 rounded-2xl border border-gray-700">
         <p className="text-xs text-gray-500 uppercase font-bold mb-3 px-2">Quick Action</p>
-        <button className="w-full flex items-center justify-center space-x-2 bg-gradient-to-r from-blue-600 to-purple-600 p-3 rounded-xl font-semibold hover:opacity-90 transition-opacity">
+        <button 
+          onClick={() => window.location.href = '/orders'}
+          className="w-full flex items-center justify-center space-x-2 bg-gradient-to-r from-blue-600 to-purple-600 p-3 rounded-xl font-semibold hover:opacity-90 transition-opacity"
+        >
           <PlusCircle size={18} />
           <span>New Order</span>
         </button>
