@@ -19,7 +19,7 @@ const TopBar = () => {
   };
 
   return (
-    <div className="h-16 bg-gray-900/50 backdrop-blur-md border-b border-gray-800 flex items-center justify-between px-8 sticky top-0 z-40 ml-64">
+    <div className="h-16 bg-gray-900/50 backdrop-blur-md border-b border-gray-800 flex items-center justify-between px-8 sticky top-0 z-40">
       {/* Global Search Bar */}
       <div className="relative w-96">
         <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">

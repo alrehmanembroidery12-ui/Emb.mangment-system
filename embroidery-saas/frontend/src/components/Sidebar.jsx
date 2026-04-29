@@ -23,7 +23,7 @@ const Sidebar = () => {
   ];
 
   return (
-    <div className="w-64 bg-gray-900 border-r border-gray-800 h-screen flex flex-col fixed left-0 top-0">
+    <div className="w-64 bg-gray-900 border-r border-gray-800 h-screen flex flex-col relative flex-shrink-0">
       <div className="p-6">
         <h2 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-600">
           Embroidery Pro
