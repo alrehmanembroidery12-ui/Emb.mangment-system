@@ -62,7 +62,7 @@ app.get('/', (req, res) => {
 const frontendBuildPath = path.join(__dirname, '../frontend/dist');
 app.use(express.static(frontendBuildPath));
 
-// Catch-all route to serve index.html for any request that doesn't match an API route
+/*
 app.get('(.*)', (req, res) => {
   if (req.path.startsWith('/api')) {
     return res.status(404).json({ message: 'API route not found' });
@@ -73,6 +73,7 @@ app.get('(.*)', (req, res) => {
     }
   });
 });
+*/
 
 // Global Error Handler (The Senior Dev Way)
 app.use((err, req, res, next) => {
