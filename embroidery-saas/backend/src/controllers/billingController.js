@@ -33,6 +33,19 @@ exports.recordPayment = async (req, res) => {
       [req.user.factory_id, invoice_id, amount, payment_method]
     );
 
+    // 1b. Add to Client Ledger (Credit)
+    const invRes = await db.query('SELECT order_id FROM invoices WHERE id = $1', [invoice_id]);
+    const order_id = invRes.rows[0]?.order_id;
+    const clientRes = await db.query('SELECT client_id FROM orders WHERE id = $1', [order_id]);
+    const client_id = clientRes.rows[0]?.client_id;
+
+    if (client_id) {
+      await db.query(
+        'INSERT INTO client_transactions (factory_id, client_id, order_id, amount, transaction_type, description, credit) VALUES ($1, $2, $3, $4, $5, $6, $7)',
+        [req.user.factory_id, client_id, order_id, amount, 'Credit', `Payment for Invoice #${invoice_id}`, amount]
+      );
+    }
+
     // 2. Get Total Paid for this Invoice
     const paidResult = await db.query('SELECT SUM(amount) as total_paid FROM payments WHERE invoice_id = $1', [invoice_id]);
     const total_paid = parseFloat(paidResult.rows[0].total_paid);

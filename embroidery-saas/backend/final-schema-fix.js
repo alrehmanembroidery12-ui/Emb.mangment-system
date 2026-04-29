@@ -18,15 +18,17 @@ async function fix() {
       ADD COLUMN IF NOT EXISTS trial_ends_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP + INTERVAL '30 days',
       ADD COLUMN IF NOT EXISTS subscription_ends_at TIMESTAMP;
 
-      -- 2. Add credit/debit columns to client_transactions if missing
+      -- 2. Add credit/debit/order_id columns to client_transactions if missing
       ALTER TABLE client_transactions 
       ADD COLUMN IF NOT EXISTS credit DECIMAL(10, 2) DEFAULT 0.00,
-      ADD COLUMN IF NOT EXISTS debit DECIMAL(10, 2) DEFAULT 0.00;
+      ADD COLUMN IF NOT EXISTS debit DECIMAL(10, 2) DEFAULT 0.00,
+      ADD COLUMN IF NOT EXISTS order_id INTEGER REFERENCES orders(id) ON DELETE SET NULL;
 
-      -- 3. Add credit/debit columns to worker_transactions if missing
+      -- 3. Add credit/debit/order_id columns to worker_transactions if missing
       ALTER TABLE worker_transactions 
       ADD COLUMN IF NOT EXISTS credit DECIMAL(10, 2) DEFAULT 0.00,
-      ADD COLUMN IF NOT EXISTS debit DECIMAL(10, 2) DEFAULT 0.00;
+      ADD COLUMN IF NOT EXISTS debit DECIMAL(10, 2) DEFAULT 0.00,
+      ADD COLUMN IF NOT EXISTS order_id INTEGER REFERENCES orders(id) ON DELETE SET NULL;
 
       -- 4. Add item_code and category to inventory if missing
       ALTER TABLE inventory ADD COLUMN IF NOT EXISTS item_code VARCHAR(100);

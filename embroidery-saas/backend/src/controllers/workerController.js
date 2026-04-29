@@ -6,9 +6,9 @@ exports.getWorkers = async (req, res) => {
     const result = await db.query(
       `SELECT 
         w.*, 
-        COALESCE(SUM(CASE WHEN t.transaction_type = 'Credit' THEN t.amount ELSE 0 END), 0) as total_bonus,
-        COALESCE(SUM(CASE WHEN t.transaction_type = 'Debit' THEN t.amount ELSE 0 END), 0) as total_advance,
-        (w.base_salary + COALESCE(SUM(CASE WHEN t.transaction_type = 'Credit' THEN t.amount ELSE 0 END), 0) - COALESCE(SUM(CASE WHEN t.transaction_type = 'Debit' THEN t.amount ELSE 0 END), 0)) as balance
+        COALESCE(SUM(t.credit), 0) as total_bonus,
+        COALESCE(SUM(t.debit), 0) as total_advance,
+        (w.base_salary + COALESCE(SUM(t.credit), 0) - COALESCE(SUM(t.debit), 0)) as balance
       FROM workers w
       LEFT JOIN worker_transactions t ON w.id = t.worker_id
       WHERE w.factory_id = $1
@@ -40,16 +40,16 @@ exports.addWorker = async (req, res) => {
     // Add initial bonus if provided
     if (bonus && parseFloat(bonus) > 0) {
       await db.query(
-        'INSERT INTO worker_transactions (factory_id, worker_id, amount, transaction_type, description) VALUES ($1, $2, $3, $4, $5)',
-        [req.user.factory_id, worker.id, bonus, 'Credit', 'Initial Bonus']
+        'INSERT INTO worker_transactions (factory_id, worker_id, amount, transaction_type, description, credit) VALUES ($1, $2, $3, $4, $5, $6)',
+        [req.user.factory_id, worker.id, bonus, 'Credit', 'Initial Bonus', bonus]
       );
     }
 
     // Add initial advance if provided
     if (advance && parseFloat(advance) > 0) {
       await db.query(
-        'INSERT INTO worker_transactions (factory_id, worker_id, amount, transaction_type, description) VALUES ($1, $2, $3, $4, $5)',
-        [req.user.factory_id, worker.id, advance, 'Debit', 'Initial Advance']
+        'INSERT INTO worker_transactions (factory_id, worker_id, amount, transaction_type, description, debit) VALUES ($1, $2, $3, $4, $5, $6)',
+        [req.user.factory_id, worker.id, advance, 'Debit', 'Initial Advance', advance]
       );
     }
 
@@ -82,16 +82,16 @@ exports.updateWorker = async (req, res) => {
     // Add additional bonus if provided
     if (bonus && parseFloat(bonus) > 0) {
       await db.query(
-        'INSERT INTO worker_transactions (factory_id, worker_id, amount, transaction_type, description) VALUES ($1, $2, $3, $4, $5)',
-        [req.user.factory_id, id, bonus, 'Credit', 'Additional Bonus']
+        'INSERT INTO worker_transactions (factory_id, worker_id, amount, transaction_type, description, credit) VALUES ($1, $2, $3, $4, $5, $6)',
+        [req.user.factory_id, id, bonus, 'Credit', 'Additional Bonus', bonus]
       );
     }
 
     // Add additional advance if provided
     if (advance && parseFloat(advance) > 0) {
       await db.query(
-        'INSERT INTO worker_transactions (factory_id, worker_id, amount, transaction_type, description) VALUES ($1, $2, $3, $4, $5)',
-        [req.user.factory_id, id, advance, 'Debit', 'Additional Advance']
+        'INSERT INTO worker_transactions (factory_id, worker_id, amount, transaction_type, description, debit) VALUES ($1, $2, $3, $4, $5, $6)',
+        [req.user.factory_id, id, advance, 'Debit', 'Additional Advance', advance]
       );
     }
 

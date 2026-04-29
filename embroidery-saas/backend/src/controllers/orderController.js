@@ -34,19 +34,19 @@ exports.createOrder = async (req, res) => {
 
     const order = orderResult.rows[0];
 
-    // 2. Add Bill to Client Ledger (Credit)
+    // 2. Add Bill to Client Ledger (Debit - Client owes money)
     await db.query(
-      `INSERT INTO client_transactions (factory_id, client_id, order_id, amount, transaction_type, description) 
-       VALUES ($1, $2, $3, $4, $5, $6)`,
-      [req.user.factory_id, client_id, order.id, total_price, 'Credit', `Bill for Order #${order_number}`]
+      `INSERT INTO client_transactions (factory_id, client_id, order_id, amount, transaction_type, description, debit) 
+       VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+      [req.user.factory_id, client_id, order.id, total_price, 'Debit', `Bill for Order #${order_number}`, total_price]
     );
 
-    // 3. Add Advance Payment to Client Ledger (Debit) if any
+    // 3. Add Advance Payment to Client Ledger (Credit - Client paid us) if any
     if (advance_paid && parseFloat(advance_paid) > 0) {
       await db.query(
-        `INSERT INTO client_transactions (factory_id, client_id, order_id, amount, transaction_type, description) 
-         VALUES ($1, $2, $3, $4, $5, $6)`,
-        [req.user.factory_id, client_id, order.id, advance_paid, 'Debit', `Advance for Order #${order_number}`]
+        `INSERT INTO client_transactions (factory_id, client_id, order_id, amount, transaction_type, description, credit) 
+         VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+        [req.user.factory_id, client_id, order.id, advance_paid, 'Credit', `Advance for Order #${order_number}`, advance_paid]
       );
     }
 
