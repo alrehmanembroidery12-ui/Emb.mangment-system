@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require('path');
 const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
@@ -57,9 +58,20 @@ app.get('/', (req, res) => {
   res.json({ message: 'Embroidery SaaS Backend API is running' });
 });
 
-// 404 Handler
-app.use((req, res, next) => {
-  res.status(404).json({ message: 'Resource not found' });
+// Serve static files from the React app
+const frontendBuildPath = path.join(__dirname, '../frontend/dist');
+app.use(express.static(frontendBuildPath));
+
+// Catch-all route to serve index.html for any request that doesn't match an API route
+app.get('*', (req, res) => {
+  if (req.path.startsWith('/api')) {
+    return res.status(404).json({ message: 'API route not found' });
+  }
+  res.sendFile(path.join(frontendBuildPath, 'index.html'), (err) => {
+    if (err) {
+      res.status(404).json({ message: 'Frontend build not found. Please run npm run build in frontend directory.' });
+    }
+  });
 });
 
 // Global Error Handler (The Senior Dev Way)

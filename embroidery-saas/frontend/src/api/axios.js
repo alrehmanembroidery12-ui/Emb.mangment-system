@@ -1,7 +1,10 @@
 import axios from 'axios';
 
+const apiURL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+console.log('API Base URL:', apiURL);
+
 const instance = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000',
+  baseURL: apiURL,
 });
 
 // Add a request interceptor to include JWT token in all requests
