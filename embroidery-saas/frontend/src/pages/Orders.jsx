@@ -269,31 +269,70 @@ const Orders = () => {
       {/* Ledger Modal */}
       {showLedgerModal && (
         <div className="fixed inset-0 bg-gray-950/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-gray-900 p-8 rounded-3xl w-full max-w-2xl border border-gray-800 shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
-            <div className="flex justify-between items-center mb-6"><div><h2 className="text-2xl font-bold text-white">Client Ledger</h2><p className="text-blue-400 font-semibold">{selectedClient?.name} - {selectedClient?.shop_name}</p></div><button onClick={() => setShowLedgerModal(false)} className="text-gray-500 hover:text-white text-3xl">&times;</button></div>
-            <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar space-y-3">
-              {clientTransactions.map((t) => (
-                <div key={t.id} className="bg-gray-800/50 p-4 rounded-2xl border border-gray-800 flex items-center justify-between group hover:border-gray-700 transition-all">
-                  <div className="flex items-center space-x-4">
-                    <div className={`p-3 rounded-xl ${t.transaction_type === 'Credit' ? 'bg-green-600/10 text-green-500' : 'bg-red-600/10 text-red-500'}`}>
-                      {t.transaction_type === 'Credit' ? <ArrowDownCircle size={20} /> : <ArrowUpCircle size={20} />}
-                    </div>
-                    <div>
-                      <p className="text-white font-semibold">{t.description}</p>
-                      <p className="text-gray-500 text-xs flex items-center space-x-1 mt-0.5"><Calendar size={12} /><span>{new Date(t.transaction_date).toLocaleDateString()}</span></p>
-                    </div>
+          <div className="bg-gray-900 p-8 rounded-3xl w-full max-w-3xl border border-gray-800 shadow-2xl overflow-hidden flex flex-col max-h-[95vh]">
+            <div className="flex justify-between items-center mb-6">
+              <div>
+                <h2 className="text-2xl font-bold text-white">Detailed Client Ledger</h2>
+                <p className="text-blue-400 font-semibold">{selectedClient?.name} - {selectedClient?.shop_name}</p>
+              </div>
+              <button onClick={() => setShowLedgerModal(false)} className="text-gray-500 hover:text-white text-3xl">&times;</button>
+            </div>
+
+            {/* Ledger Summary Stats */}
+            <div className="grid grid-cols-3 gap-4 mb-6">
+              <div className="bg-gray-800/50 p-4 rounded-2xl border border-gray-800">
+                <p className="text-gray-500 text-xs font-bold uppercase mb-1">Total Billed</p>
+                <p className="text-red-500 text-xl font-bold">₨ {clientTransactions.filter(t => t.transaction_type === 'Debit').reduce((sum, t) => sum + parseFloat(t.amount), 0).toLocaleString()}</p>
+              </div>
+              <div className="bg-gray-800/50 p-4 rounded-2xl border border-gray-800">
+                <p className="text-gray-500 text-xs font-bold uppercase mb-1">Total Received</p>
+                <p className="text-green-500 text-xl font-bold">₨ {clientTransactions.filter(t => t.transaction_type === 'Credit').reduce((sum, t) => sum + parseFloat(t.amount), 0).toLocaleString()}</p>
+              </div>
+              <div className="bg-gray-800/50 p-4 rounded-2xl border border-gray-800 border-blue-500/30 shadow-lg shadow-blue-500/5">
+                <p className="text-blue-400 text-xs font-bold uppercase mb-1">Current Balance</p>
+                <p className="text-white text-xl font-bold">₨ {parseFloat(selectedClient?.balance).toLocaleString()}</p>
+              </div>
+            </div>
+
+            <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar space-y-2">
+              <div className="grid grid-cols-12 gap-2 px-4 py-2 text-xs font-bold text-gray-500 uppercase tracking-wider border-b border-gray-800">
+                <div className="col-span-5">Transaction Details</div>
+                <div className="col-span-3 text-right">Debit (+)</div>
+                <div className="col-span-2 text-right">Credit (-)</div>
+                <div className="col-span-2 text-right">Balance</div>
+              </div>
+              
+              {[...clientTransactions].reverse().reduce((acc, t, i) => {
+                const prevBalance = i === 0 ? 0 : acc[i-1].runningBalance;
+                const balance = t.transaction_type === 'Debit' ? prevBalance + parseFloat(t.amount) : prevBalance - parseFloat(t.amount);
+                acc.push({ ...t, runningBalance: balance });
+                return acc;
+              }, []).reverse().map((t) => (
+                <div key={t.id} className="grid grid-cols-12 gap-2 px-4 py-4 bg-gray-800/30 rounded-xl border border-gray-800 items-center hover:border-gray-700 transition-all">
+                  <div className="col-span-5">
+                    <p className="text-white font-semibold text-sm">{t.description}</p>
+                    <p className="text-gray-500 text-[10px] flex items-center space-x-1 mt-0.5"><Calendar size={10} /><span>{new Date(t.transaction_date).toLocaleDateString()}</span></p>
                   </div>
-                  <div className="text-right">
-                    <p className={`text-lg font-bold ${t.transaction_type === 'Credit' ? 'text-green-500' : 'text-red-500'}`}>
-                      {t.transaction_type === 'Credit' ? '-' : '+'} ₨ {t.amount}
-                    </p>
+                  <div className="col-span-3 text-right">
+                    {t.transaction_type === 'Debit' ? (
+                      <span className="text-red-500 font-bold text-sm">₨ {parseFloat(t.amount).toLocaleString()}</span>
+                    ) : <span className="text-gray-600">-</span>}
+                  </div>
+                  <div className="col-span-2 text-right">
+                    {t.transaction_type === 'Credit' ? (
+                      <span className="text-green-500 font-bold text-sm">₨ {parseFloat(t.amount).toLocaleString()}</span>
+                    ) : <span className="text-gray-600">-</span>}
+                  </div>
+                  <div className="col-span-2 text-right">
+                    <span className={`font-bold text-sm ${t.runningBalance > 0 ? 'text-white' : 'text-green-400'}`}>
+                      ₨ {t.runningBalance.toLocaleString()}
+                    </span>
                   </div>
                 </div>
               ))}
             </div>
-            <div className="mt-6 pt-6 border-t border-gray-800 flex justify-between items-center">
-              <span className="text-gray-400 font-bold uppercase text-sm">Current Balance:</span>
-              <span className={`text-2xl font-bold ${parseFloat(selectedClient?.balance) > 0 ? 'text-red-500' : 'text-green-500'}`}>₨ {selectedClient?.balance}</span>
+            <div className="mt-6 pt-4 border-t border-gray-800 text-center">
+              <p className="text-gray-500 text-[10px] uppercase font-bold tracking-widest">End of Ledger Statement</p>
             </div>
           </div>
         </div>
