@@ -161,29 +161,32 @@ const Billing = () => {
                 <tr className="border-b-2 border-gray-900 text-xs font-black uppercase">
                   <th className="py-4 px-2">Date</th>
                   <th className="py-4 px-2">Description</th>
-                  <th className="py-4 px-2 text-right">Debit (Recv)</th>
-                  <th className="py-4 px-2 text-right">Credit (Bill)</th>
+                  <th className="py-4 px-2 text-right">Debit (+)</th>
+                  <th className="py-4 px-2 text-right">Credit (-)</th>
                   <th className="py-4 px-2 text-right">Balance</th>
                 </tr>
               </thead>
               <tbody className="text-sm">
                 {reportData.length > 0 ? (
-                  reportData.map((t, idx) => {
-                    // Running balance calculation in UI for display
-                    const prevBalance = idx === 0 ? 0 : reportData.slice(0, idx).reduce((acc, curr) => acc + (parseFloat(curr.credit) - parseFloat(curr.debit)), 0);
-                    const currentBalance = prevBalance + (parseFloat(t.credit) - parseFloat(t.debit));
-                    return (
-                      <tr key={t.id} className="border-b border-gray-100">
-                        <td className="py-4 px-2">{new Date(t.transaction_date).toLocaleDateString()}</td>
-                        <td className="py-4 px-2 font-medium">{t.description || 'Order Bill'}</td>
-                        <td className="py-4 px-2 text-right text-red-600 font-bold">{t.debit > 0 ? `₨ ${parseFloat(t.debit).toLocaleString()}` : '-'}</td>
-                        <td className="py-4 px-2 text-right text-green-600 font-bold">{t.credit > 0 ? `₨ ${parseFloat(t.credit).toLocaleString()}` : '-'}</td>
-                        <td className="py-4 px-2 text-right font-black">₨ {currentBalance.toLocaleString()}</td>
-                      </tr>
-                    );
-                  })
+                  reportData.reduce((acc, t, idx) => {
+                    const prevBalance = idx === 0 ? 0 : acc[idx-1].runningBalance;
+                    const credit = parseFloat(t.credit || 0);
+                    const debit = parseFloat(t.debit || 0);
+                    // Balance = Bills (Debit) - Payments (Credit)
+                    const currentBalance = prevBalance + (debit - credit);
+                    acc.push({ ...t, runningBalance: currentBalance });
+                    return acc;
+                  }, []).map((t) => (
+                    <tr key={t.id} className="border-b border-gray-100">
+                      <td className="py-4 px-2">{new Date(t.transaction_date).toLocaleDateString()}</td>
+                      <td className="py-4 px-2 font-medium">{t.description || 'Transaction'}</td>
+                      <td className="py-4 px-2 text-right text-red-600 font-bold">{parseFloat(t.debit || 0) > 0 ? `₨ ${parseFloat(t.debit).toLocaleString()}` : '-'}</td>
+                      <td className="py-4 px-2 text-right text-green-600 font-bold">{parseFloat(t.credit || 0) > 0 ? `₨ ${parseFloat(t.credit).toLocaleString()}` : '-'}</td>
+                      <td className="py-4 px-2 text-right font-black text-blue-600">₨ {t.runningBalance.toLocaleString()}</td>
+                    </tr>
+                  ))
                 ) : (
-                  <tr><td colSpan="5" className="py-20 text-center text-gray-400 italic">No transactions found for this period.</td></tr>
+                  <tr><td colSpan="5" className="py-20 text-center text-gray-400 italic">No transactions found for this period. Pehlay client select karain aur "Generate Report" click karain.</td></tr>
                 )}
               </tbody>
             </table>
@@ -191,9 +194,9 @@ const Billing = () => {
             {reportData.length > 0 && (
               <div className="mt-8 flex justify-end">
                 <div className="bg-gray-50 p-6 rounded-2xl w-64 space-y-2 border border-gray-100">
-                  <div className="flex justify-between text-xs text-gray-500 font-bold uppercase"><span>Total Bill:</span> <span className="text-black">₨ {reportData.reduce((acc, t) => acc + parseFloat(t.credit), 0).toLocaleString()}</span></div>
-                  <div className="flex justify-between text-xs text-gray-500 font-bold uppercase"><span>Total Paid:</span> <span className="text-black">₨ {reportData.reduce((acc, t) => acc + parseFloat(t.debit), 0).toLocaleString()}</span></div>
-                  <div className="border-t border-gray-200 pt-2 flex justify-between font-black text-lg"><span>Net Balance:</span> <span className="text-blue-600">₨ {(reportData.reduce((acc, t) => acc + parseFloat(t.credit), 0) - reportData.reduce((acc, t) => acc + parseFloat(t.debit), 0)).toLocaleString()}</span></div>
+                  <div className="flex justify-between text-xs text-gray-500 font-bold uppercase"><span>Total Bill:</span> <span className="text-black font-bold">₨ {reportData.reduce((acc, t) => acc + parseFloat(t.debit || 0), 0).toLocaleString()}</span></div>
+                  <div className="flex justify-between text-xs text-gray-500 font-bold uppercase"><span>Total Paid:</span> <span className="text-black font-bold">₨ {reportData.reduce((acc, t) => acc + parseFloat(t.credit || 0), 0).toLocaleString()}</span></div>
+                  <div className="border-t border-gray-200 pt-2 flex justify-between font-black text-lg"><span>Net Balance:</span> <span className="text-blue-600">₨ {(reportData.reduce((acc, t) => acc + parseFloat(t.debit || 0), 0) - reportData.reduce((acc, t) => acc + parseFloat(t.credit || 0), 0)).toLocaleString()}</span></div>
                 </div>
               </div>
             )}
