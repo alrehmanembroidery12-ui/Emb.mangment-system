@@ -67,14 +67,16 @@ const Orders = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await api.post('/api/orders', formData);
+      const res = await api.post('/api/orders', formData);
       setShowModal(false);
       fetchOrders();
       fetchClients();
       setFormData({ client_id: '', order_number: '', total_price: 0, advance_paid: 0, production_cost: 0, fabric_quantity: 0, due_date: '' });
       alert('Order created successfully!');
     } catch (err) {
-      alert('Error creating order: ' + (err.response?.data || err.message));
+      console.error('Order creation error:', err.response?.data);
+      const errorMsg = err.response?.data?.message || err.response?.data?.error || err.message;
+      alert('Error creating order: ' + errorMsg);
     }
   };
 
