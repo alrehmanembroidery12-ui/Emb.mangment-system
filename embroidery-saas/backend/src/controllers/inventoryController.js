@@ -16,11 +16,11 @@ exports.getInventory = async (req, res) => {
 
 // Add new item to inventory (Thread, Bobbin, Spare Parts, etc.)
 exports.addItem = async (req, res) => {
-  const { item_name, item_code, category, quantity, unit, min_stock_level } = req.body;
+  const { item_name, item_code, category, quantity, unit, min_stock_level, unit_price } = req.body;
   try {
     const result = await db.query(
-      'INSERT INTO inventory (factory_id, item_name, item_code, category, quantity, unit, min_stock_level) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *',
-      [req.user.factory_id, item_name, item_code, category, quantity || 0, unit, min_stock_level || 0]
+      'INSERT INTO inventory (factory_id, item_name, item_code, category, quantity, unit, min_stock_level, unit_price) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *',
+      [req.user.factory_id, item_name, item_code, category, quantity || 0, unit, min_stock_level || 0, unit_price || 0]
     );
     
     // Initial stock transaction
@@ -87,13 +87,13 @@ exports.getItemHistory = async (req, res) => {
 // Update item details (metadata)
 exports.updateItem = async (req, res) => {
   const { id } = req.params;
-  const { item_name, item_code, category, unit, min_stock_level } = req.body;
+  const { item_name, item_code, category, unit, min_stock_level, unit_price } = req.body;
   try {
     const result = await db.query(
       `UPDATE inventory 
-       SET item_name = $1, item_code = $2, category = $3, unit = $4, min_stock_level = $5, updated_at = CURRENT_TIMESTAMP 
-       WHERE id = $6 AND factory_id = $7 RETURNING *`,
-      [item_name, item_code, category, unit, min_stock_level, id, req.user.factory_id]
+       SET item_name = $1, item_code = $2, category = $3, unit = $4, min_stock_level = $5, unit_price = $6, updated_at = CURRENT_TIMESTAMP 
+       WHERE id = $7 AND factory_id = $8 RETURNING *`,
+      [item_name, item_code, category, unit, min_stock_level, unit_price || 0, id, req.user.factory_id]
     );
     if (result.rows.length === 0) return res.status(404).json({ message: 'Item not found' });
     res.json(result.rows[0]);

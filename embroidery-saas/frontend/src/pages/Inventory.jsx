@@ -19,7 +19,8 @@ const Inventory = () => {
     category: 'Thread',
     quantity: 0,
     unit: 'Cones',
-    min_stock_level: 5
+    min_stock_level: 5,
+    unit_price: 0
   });
 
   const [transData, setTransData] = useState({
@@ -66,7 +67,7 @@ const Inventory = () => {
       setIsEditing(false);
       setSelectedItem(null);
       fetchInventory();
-      setFormData({ item_name: '', item_code: '', category: 'Thread', quantity: 0, unit: 'Cones', min_stock_level: 5 });
+      setFormData({ item_name: '', item_code: '', category: 'Thread', quantity: 0, unit: 'Cones', min_stock_level: 5, unit_price: 0 });
     } catch (err) {
       alert('Error: ' + (err.response?.data || err.message));
     }
@@ -80,7 +81,8 @@ const Inventory = () => {
       category: item.category,
       quantity: item.quantity,
       unit: item.unit,
-      min_stock_level: item.min_stock_level
+      min_stock_level: item.min_stock_level,
+      unit_price: item.unit_price || 0
     });
     setIsEditing(true);
     setShowModal(true);
@@ -160,6 +162,7 @@ const Inventory = () => {
               <th className="px-6 py-4">Item Code / Thread #</th>
               <th className="px-6 py-4">Item Description</th>
               <th className="px-6 py-4">Category</th>
+              <th className="px-6 py-4">Unit Price</th>
               <th className="px-6 py-4">Current Stock</th>
               <th className="px-6 py-4">Status</th>
               <th className="px-6 py-4 text-right">Actions</th>
@@ -179,6 +182,10 @@ const Inventory = () => {
                   </td>
                   <td className="px-6 py-5">
                     <span className="bg-gray-800 text-gray-300 px-3 py-1 rounded-full text-xs font-bold border border-gray-700">{item.category}</span>
+                  </td>
+                  <td className="px-6 py-5">
+                    <p className="text-white font-bold">₨ {item.unit_price || 0}</p>
+                    <p className="text-gray-500 text-[10px] uppercase font-bold tracking-tighter">Per {item.unit}</p>
                   </td>
                   <td className="px-6 py-5">
                     <p className="text-white font-bold text-lg">{item.quantity} <span className="text-gray-500 text-xs font-normal">{item.unit}</span></p>
@@ -214,6 +221,10 @@ const Inventory = () => {
                   <div><label className="block text-xs font-bold text-gray-500 uppercase mb-2">Initial Cones/Qty</label><input type="number" className="w-full bg-gray-800 border border-gray-700 rounded-xl p-3 text-white focus:ring-2 focus:ring-purple-500 outline-none" value={formData.quantity} onChange={(e) => setFormData({...formData, quantity: e.target.value})} /></div>
                 )}
                 <div className={isEditing ? 'col-span-2' : ''}><label className="block text-xs font-bold text-gray-500 uppercase mb-2">Unit</label><input type="text" className="w-full bg-gray-800 border border-gray-700 rounded-xl p-3 text-white focus:ring-2 focus:ring-purple-500 outline-none" placeholder="e.g. Cones" value={formData.unit} onChange={(e) => setFormData({...formData, unit: e.target.value})} required /></div>
+                <div className="col-span-2">
+                  <label className="block text-xs font-bold text-gray-500 uppercase mb-2">Unit Price (₨)</label>
+                  <input type="number" className="w-full bg-gray-800 border border-gray-700 rounded-xl p-3 text-white focus:ring-2 focus:ring-purple-500 outline-none" value={formData.unit_price} onChange={(e) => setFormData({...formData, unit_price: e.target.value})} />
+                </div>
                 <div className="col-span-2"><label className="block text-xs font-bold text-gray-500 uppercase mb-2">Low Stock Alert Level</label><input type="number" className="w-full bg-gray-800 border border-gray-700 rounded-xl p-3 text-white focus:ring-2 focus:ring-purple-500 outline-none" value={formData.min_stock_level} onChange={(e) => setFormData({...formData, min_stock_level: e.target.value})} /></div>
               </div>
               <button type="submit" className="w-full bg-gradient-to-r from-purple-600 to-purple-700 py-4 rounded-xl font-bold text-white shadow-lg shadow-purple-600/20 mt-4 transition-all">{isEditing ? 'Update Item' : 'Create Item'}</button>
