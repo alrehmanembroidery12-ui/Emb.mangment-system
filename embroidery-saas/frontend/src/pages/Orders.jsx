@@ -139,15 +139,30 @@ const Orders = () => {
           <p className="text-gray-500 text-sm mt-1">Manage production, fabric (gazana), and client ledger</p>
         </div>
         <div className="flex space-x-3">
-          <button onClick={() => setShowClientModal(true)} className="bg-gray-800 hover:bg-gray-700 border border-gray-700 px-6 py-2.5 rounded-xl font-semibold flex items-center space-x-2 transition-all"><UserPlus size={18} /><span>Add Client</span></button>
-          <button onClick={() => setShowModal(true)} className="bg-blue-600 hover:bg-blue-700 px-6 py-2.5 rounded-xl font-semibold flex items-center space-x-2 transition-all shadow-lg shadow-blue-600/20"><Plus size={18} /><span>New Order</span></button>
+          <button onClick={() => {
+            setClientData({ name: '', shop_name: '', phone: '', address: '' });
+            setShowClientModal(true);
+          }} className="bg-gray-800 hover:bg-gray-700 border border-gray-700 px-6 py-2.5 rounded-xl font-semibold flex items-center space-x-2 transition-all"><UserPlus size={18} /><span>Add Client</span></button>
+          <button onClick={() => {
+            setFormData({ client_id: '', order_number: '', total_price: 0, advance_paid: 0, production_cost: 0, fabric_quantity: 0, due_date: '' });
+            setClientSearchTerm('');
+            setShowModal(true);
+          }} className="bg-blue-600 hover:bg-blue-700 px-6 py-2.5 rounded-xl font-semibold flex items-center space-x-2 transition-all shadow-lg shadow-blue-600/20"><Plus size={18} /><span>New Order</span></button>
         </div>
       </div>
 
       <div className="flex gap-4 bg-gray-900/50 p-4 rounded-2xl border border-gray-800">
         <div className="relative flex-1">
           <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
-          <input type="text" placeholder="Search by Order #, Client, or Shop..." className="w-full bg-gray-800 border border-gray-700 rounded-xl py-2.5 pl-10 pr-4 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+          <input type="text" placeholder="Search by Order #, Client, or Shop..." className="w-full bg-gray-800 border border-gray-700 rounded-xl py-2.5 pl-10 pr-10 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+          {searchTerm && (
+            <button 
+              onClick={() => setSearchTerm('')}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white"
+            >
+              &times;
+            </button>
+          )}
         </div>
         <select className="bg-gray-800 border border-gray-700 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
           <option value="All">All Status</option>

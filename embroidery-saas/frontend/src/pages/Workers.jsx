@@ -129,7 +129,11 @@ const Workers = () => {
             <span>{loadingSalary ? 'Processing...' : 'Generate Monthly Salary'}</span>
           </button>
           <button 
-            onClick={() => setShowModal(true)}
+            onClick={() => {
+              setSelectedWorker(null);
+              setFormData({ name: '', phone: '', salary_type: 'Fixed', base_salary: 0, bonus: 0, advance: 0 });
+              setShowModal(true);
+            }}
             className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 px-6 py-2.5 rounded-xl font-semibold transition-all shadow-lg shadow-blue-600/20"
           >
             <Plus size={18} />
@@ -145,10 +149,18 @@ const Workers = () => {
           <input 
             type="text" 
             placeholder="Search by name or phone..."
-            className="w-full bg-gray-800 border border-gray-700 rounded-xl py-2.5 pl-10 pr-4 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+            className="w-full bg-gray-800 border border-gray-700 rounded-xl py-2.5 pl-10 pr-10 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
+          {searchTerm && (
+            <button 
+              onClick={() => setSearchTerm('')}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white"
+            >
+              &times;
+            </button>
+          )}
         </div>
         <div className="flex gap-2">
           <select 
