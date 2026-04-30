@@ -273,10 +273,19 @@ const Orders = () => {
               {clientTransactions.map((t) => (
                 <div key={t.id} className="bg-gray-800/50 p-4 rounded-2xl border border-gray-800 flex items-center justify-between group hover:border-gray-700 transition-all">
                   <div className="flex items-center space-x-4">
-                    <div className={`p-3 rounded-xl ${t.transaction_type === 'Credit' ? 'bg-red-600/10 text-red-500' : 'bg-green-600/10 text-green-500'}`}>{t.transaction_type === 'Credit' ? <ArrowUpCircle size={20} /> : <ArrowDownCircle size={20} />}</div>
-                    <div><p className="text-white font-semibold">{t.description}</p><p className="text-gray-500 text-xs flex items-center space-x-1 mt-0.5"><Calendar size={12} /><span>{new Date(t.transaction_date).toLocaleDateString()}</span></p></div>
+                    <div className={`p-3 rounded-xl ${t.transaction_type === 'Credit' ? 'bg-green-600/10 text-green-500' : 'bg-red-600/10 text-red-500'}`}>
+                      {t.transaction_type === 'Credit' ? <ArrowDownCircle size={20} /> : <ArrowUpCircle size={20} />}
+                    </div>
+                    <div>
+                      <p className="text-white font-semibold">{t.description}</p>
+                      <p className="text-gray-500 text-xs flex items-center space-x-1 mt-0.5"><Calendar size={12} /><span>{new Date(t.transaction_date).toLocaleDateString()}</span></p>
+                    </div>
                   </div>
-                  <div className="text-right"><p className={`text-lg font-bold ${t.transaction_type === 'Credit' ? 'text-red-500' : 'text-green-500'}`}>{t.transaction_type === 'Credit' ? '+' : '-'} ₨ {t.amount}</p></div>
+                  <div className="text-right">
+                    <p className={`text-lg font-bold ${t.transaction_type === 'Credit' ? 'text-green-500' : 'text-red-500'}`}>
+                      {t.transaction_type === 'Credit' ? '-' : '+'} ₨ {t.amount}
+                    </p>
+                  </div>
                 </div>
               ))}
             </div>
