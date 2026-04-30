@@ -27,6 +27,7 @@ const Orders = () => {
     due_date: ''
   });
   
+  const [clientSearchTerm, setClientSearchTerm] = useState('');
   const [clientData, setClientData] = useState({ name: '', shop_name: '', phone: '', address: '' });
   const [paymentData, setPaymentData] = useState({ amount: 0, description: 'Balance Payment', date: new Date().toISOString().split('T')[0] });
 
@@ -99,12 +100,13 @@ const Orders = () => {
       await api.post('/api/client-transactions', {
         client_id: selectedClient.id,
         amount: paymentData.amount,
-        transaction_type: 'Debit',
+        transaction_type: 'Credit',
         description: paymentData.description,
         transaction_date: paymentData.date
       });
       setShowPaymentModal(false);
       fetchClients();
+      fetchOrders();
       alert('Payment recorded successfully!');
     } catch (err) {
       alert('Error adding payment: ' + (err.response?.data || err.message));
@@ -211,8 +213,45 @@ const Orders = () => {
             <div className="flex justify-between items-center mb-6"><h2 className="text-2xl font-bold text-white">Create New Order</h2><button onClick={() => setShowModal(false)} className="text-gray-500 hover:text-white text-3xl">&times;</button></div>
             <form onSubmit={handleSubmit} className="space-y-5">
               <div className="grid grid-cols-2 gap-4">
-                <div className="col-span-2"><label className="block text-xs font-bold text-gray-500 uppercase mb-2">Order Number</label><input type="text" className="w-full bg-gray-800 border border-gray-700 rounded-xl p-3 text-white focus:ring-2 focus:ring-blue-500 outline-none" placeholder="e.g. ORD-1001" value={formData.order_number} onChange={(e) => setFormData({...formData, order_number: e.target.value})} required /></div>
-                <div className="col-span-2"><label className="block text-xs font-bold text-gray-500 uppercase mb-2">Client</label><select className="w-full bg-gray-800 border border-gray-700 rounded-xl p-3 text-white focus:ring-2 focus:ring-blue-500 outline-none" value={formData.client_id} onChange={(e) => setFormData({...formData, client_id: e.target.value})} required><option value="">Select a Client</option>{clients.map(client => (<option key={client.id} value={client.id}>{client.name} - {client.shop_name}</option>))}</select></div>
+                <div className="col-span-2">
+                  <label className="block text-xs font-bold text-gray-500 uppercase mb-2">Order Number</label>
+                  <input type="text" className="w-full bg-gray-800 border border-gray-700 rounded-xl p-3 text-white focus:ring-2 focus:ring-blue-500 outline-none" placeholder="e.g. ORD-1001" value={formData.order_number} onChange={(e) => setFormData({...formData, order_number: e.target.value})} required />
+                </div>
+                <div className="col-span-2">
+                  <label className="block text-xs font-bold text-gray-500 uppercase mb-2">Select Client</label>
+                  <div className="space-y-2">
+                    <div className="relative">
+                      <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
+                      <input 
+                        type="text" 
+                        placeholder="Search client by name or phone..." 
+                        className="w-full bg-gray-800 border border-gray-700 rounded-xl py-2 pl-9 pr-3 text-sm text-white focus:ring-2 focus:ring-blue-500 outline-none"
+                        value={clientSearchTerm}
+                        onChange={(e) => setClientSearchTerm(e.target.value)}
+                      />
+                    </div>
+                    <select 
+                      className="w-full bg-gray-800 border border-gray-700 rounded-xl p-3 text-white focus:ring-2 focus:ring-blue-500 outline-none" 
+                      value={formData.client_id} 
+                      onChange={(e) => setFormData({...formData, client_id: e.target.value})} 
+                      required
+                    >
+                      <option value="">-- Choose Client --</option>
+                      {clients
+                        .filter(c => 
+                          c.name.toLowerCase().includes(clientSearchTerm.toLowerCase()) || 
+                          (c.phone && c.phone.includes(clientSearchTerm)) ||
+                          (c.shop_name && c.shop_name.toLowerCase().includes(clientSearchTerm.toLowerCase()))
+                        )
+                        .map(client => (
+                          <option key={client.id} value={client.id}>
+                            {client.name} {client.shop_name ? `(${client.shop_name})` : ''} - {client.phone || 'No Phone'}
+                          </option>
+                        ))
+                      }
+                    </select>
+                  </div>
+                </div>
                 <div><label className="block text-xs font-bold text-gray-500 uppercase mb-2">Gazana (Meters)</label><input type="number" className="w-full bg-gray-800 border border-gray-700 rounded-xl p-3 text-white focus:ring-2 focus:ring-blue-500 outline-none" value={formData.fabric_quantity} onChange={(e) => setFormData({...formData, fabric_quantity: e.target.value})} required /></div>
                 <div><label className="block text-xs font-bold text-gray-500 uppercase mb-2">Total Bill (₨)</label><input type="number" className="w-full bg-gray-800 border border-gray-700 rounded-xl p-3 text-white focus:ring-2 focus:ring-blue-500 outline-none" value={formData.total_price} onChange={(e) => setFormData({...formData, total_price: e.target.value})} required /></div>
                 <div><label className="block text-xs font-bold text-gray-500 uppercase mb-2">Advance (₨)</label><input type="number" className="w-full bg-gray-800 border border-gray-700 rounded-xl p-3 text-white focus:ring-2 focus:ring-blue-500 outline-none" value={formData.advance_paid} onChange={(e) => setFormData({...formData, advance_paid: e.target.value})} /></div>
