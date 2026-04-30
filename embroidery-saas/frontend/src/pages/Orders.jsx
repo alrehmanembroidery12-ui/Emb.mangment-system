@@ -238,11 +238,13 @@ const Orders = () => {
                     >
                       <option value="">-- Choose Client --</option>
                       {clients
-                        .filter(c => 
-                          c.name.toLowerCase().includes(clientSearchTerm.toLowerCase()) || 
-                          (c.phone && c.phone.includes(clientSearchTerm)) ||
-                          (c.shop_name && c.shop_name.toLowerCase().includes(clientSearchTerm.toLowerCase()))
-                        )
+                        .filter(c => {
+                          if (!c.name) return false;
+                          const nameMatch = c.name.toLowerCase().includes(clientSearchTerm.toLowerCase());
+                          const shopMatch = c.shop_name ? c.shop_name.toLowerCase().includes(clientSearchTerm.toLowerCase()) : false;
+                          const phoneMatch = c.phone ? c.phone.includes(clientSearchTerm) : false;
+                          return nameMatch || shopMatch || phoneMatch;
+                        })
                         .map(client => (
                           <option key={client.id} value={client.id}>
                             {client.name} {client.shop_name ? `(${client.shop_name})` : ''} - {client.phone || 'No Phone'}
