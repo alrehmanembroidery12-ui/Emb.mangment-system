@@ -103,3 +103,59 @@ exports.updateWorker = async (req, res) => {
     res.status(500).send('Server Error');
   }
 };
+// Generate monthly salary for all active workers
+exports.generateMonthlySalary = async (req, res) => {
+  const { month, year } = req.body;
+  const factory_id = req.user.factory_id;
+
+  try {
+    // 1. Check if salaries already generated for this month
+    const checkRes = await db.query(
+      `SELECT count(*) FROM worker_transactions 
+       WHERE factory_id = $1 
+       AND description LIKE 'Monthly Salary %' 
+       AND EXTRACT(MONTH FROM transaction_date) = $2 
+       AND EXTRACT(YEAR FROM transaction_date) = $3`,
+      [factory_id, month, year]
+    );
+
+    if (parseInt(checkRes.rows[0].count) > 0) {
+      return res.status(400).json({ message: 'Salaries already generated for this month' });
+    }
+
+    // 2. Get all active workers
+    const workersRes = await db.query(
+      'SELECT id, name, base_salary FROM workers WHERE factory_id = $1 AND is_active = TRUE',
+      [factory_id]
+    );
+
+    const workers = workersRes.rows;
+    if (workers.length === 0) {
+      return res.status(404).json({ message: 'No active workers found' });
+    }
+
+    // 3. Start Transaction
+    await db.query('BEGIN');
+
+    const monthName = new Date(year, month - 1).toLocaleString('default', { month: 'long' });
+    const description = `Monthly Salary - ${monthName} ${year}`;
+    const transaction_date = new Date(year, month - 1, 1); // Set to 1st of the month
+
+    for (const worker of workers) {
+      if (parseFloat(worker.base_salary) > 0) {
+        await db.query(
+          `INSERT INTO worker_transactions (factory_id, worker_id, amount, transaction_type, description, transaction_date, credit, debit) 
+           VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+          [factory_id, worker.id, worker.base_salary, 'Credit', description, transaction_date, worker.base_salary, 0]
+        );
+      }
+    }
+
+    await db.query('COMMIT');
+    res.json({ message: `Successfully generated salaries for ${workers.length} workers for ${monthName} ${year}` });
+  } catch (err) {
+    await db.query('ROLLBACK');
+    console.error(err);
+    res.status(500).send('Server Error');
+  }
+};

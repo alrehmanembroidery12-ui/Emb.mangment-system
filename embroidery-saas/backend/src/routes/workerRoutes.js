@@ -6,5 +6,6 @@ const { authMiddleware } = require('../middleware/authMiddleware');
 router.get('/', authMiddleware, workerController.getWorkers);
 router.post('/', authMiddleware, workerController.addWorker);
 router.put('/:id', authMiddleware, workerController.updateWorker);
+router.post('/generate-salary', authMiddleware, workerController.generateMonthlySalary);
 
 module.exports = router;

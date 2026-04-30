@@ -14,6 +14,9 @@ const Workers = () => {
   const [workerTransactions, setWorkerTransactions] = useState([]);
   const [formData, setFormData] = useState({ name: '', phone: '', salary_type: 'Fixed', base_salary: 0, bonus: 0, advance: 0 });
   const [transData, setTransData] = useState({ amount: 0, type: 'Credit', description: 'Daily Performance Bonus', date: new Date().toISOString().split('T')[0] });
+  const [historyMonth, setHistoryMonth] = useState(new Date().getMonth() + 1);
+  const [historyYear, setHistoryYear] = useState(new Date().getFullYear());
+  const [loadingSalary, setLoadingSalary] = useState(false);
 
   useEffect(() => {
     fetchWorkers();
@@ -40,12 +43,34 @@ const Workers = () => {
     }
   };
 
-  const fetchTransactions = async (workerId) => {
+  const fetchTransactions = async (workerId, month, year) => {
     try {
-      const res = await api.get(`/api/transactions/${workerId}`);
+      const m = month || historyMonth;
+      const y = year || historyYear;
+      const res = await api.get(`/api/transactions/${workerId}?month=${m}&year=${y}`);
       setWorkerTransactions(res.data);
     } catch (err) {
       console.error('Error fetching transactions', err);
+    }
+  };
+
+  const handleGenerateSalary = async () => {
+    if (!window.confirm(`Are you sure you want to generate salaries for ALL workers for ${new Date(historyYear, historyMonth - 1).toLocaleString('default', { month: 'long' })} ${historyYear}?`)) {
+      return;
+    }
+
+    setLoadingSalary(true);
+    try {
+      await api.post('/api/workers/generate-salary', {
+        month: historyMonth,
+        year: historyYear
+      });
+      alert('Salaries generated successfully!');
+      fetchWorkers();
+    } catch (err) {
+      alert(err.response?.data?.message || 'Error generating salaries');
+    } finally {
+      setLoadingSalary(false);
     }
   };
 
@@ -92,13 +117,25 @@ const Workers = () => {
           <h1 className="text-3xl font-bold text-white">Worker Management</h1>
           <p className="text-gray-500 text-sm mt-1">Manage your factory workforce and salary settings</p>
         </div>
-        <button 
-          onClick={() => setShowModal(true)}
-          className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 px-6 py-2.5 rounded-xl font-semibold transition-all shadow-lg shadow-blue-600/20"
-        >
-          <Plus size={18} />
-          <span>Add New Worker</span>
-        </button>
+        <div className="flex space-x-3">
+          <button 
+            onClick={handleGenerateSalary}
+            disabled={loadingSalary}
+            className={`flex items-center space-x-2 px-6 py-2.5 rounded-xl font-semibold transition-all shadow-lg ${
+              loadingSalary ? 'bg-gray-700 text-gray-500 cursor-not-allowed' : 'bg-green-600 hover:bg-green-700 text-white shadow-green-600/20'
+            }`}
+          >
+            <Wallet size={18} />
+            <span>{loadingSalary ? 'Processing...' : 'Generate Monthly Salary'}</span>
+          </button>
+          <button 
+            onClick={() => setShowModal(true)}
+            className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 px-6 py-2.5 rounded-xl font-semibold transition-all shadow-lg shadow-blue-600/20"
+          >
+            <Plus size={18} />
+            <span>Add New Worker</span>
+          </button>
+        </div>
       </div>
 
       {/* Search and Filters */}
@@ -178,7 +215,11 @@ const Workers = () => {
                 <td className="px-6 py-5 text-right">
                   <div className="flex justify-end space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
                     <button 
-                      onClick={() => { setSelectedWorker(worker); fetchTransactions(worker.id); setShowHistoryModal(true); }}
+                      onClick={() => { 
+                        setSelectedWorker(worker); 
+                        fetchTransactions(worker.id, historyMonth, historyYear); 
+                        setShowHistoryModal(true); 
+                      }}
                       className="p-2 text-yellow-500 hover:bg-yellow-500/10 rounded-lg"
                       title="View History"
                     >
@@ -378,7 +419,40 @@ const Workers = () => {
             <div className="flex justify-between items-center mb-6">
               <div>
                 <h2 className="text-2xl font-bold text-white">Transaction History</h2>
-                <p className="text-blue-400 font-semibold">{selectedWorker?.name}</p>
+                <div className="flex items-center space-x-2 mt-1">
+                  <p className="text-blue-400 font-semibold">{selectedWorker?.name}</p>
+                  <span className="text-gray-600">•</span>
+                  <div className="flex items-center space-x-2">
+                    <select 
+                      className="bg-transparent text-gray-400 text-sm outline-none cursor-pointer hover:text-white transition-colors"
+                      value={historyMonth}
+                      onChange={(e) => {
+                        const m = parseInt(e.target.value);
+                        setHistoryMonth(m);
+                        fetchTransactions(selectedWorker.id, m, historyYear);
+                      }}
+                    >
+                      {Array.from({ length: 12 }, (_, i) => (
+                        <option key={i + 1} value={i + 1} className="bg-gray-900">
+                          {new Date(0, i).toLocaleString('default', { month: 'long' })}
+                        </option>
+                      ))}
+                    </select>
+                    <select 
+                      className="bg-transparent text-gray-400 text-sm outline-none cursor-pointer hover:text-white transition-colors"
+                      value={historyYear}
+                      onChange={(e) => {
+                        const y = parseInt(e.target.value);
+                        setHistoryYear(y);
+                        fetchTransactions(selectedWorker.id, historyMonth, y);
+                      }}
+                    >
+                      {[2025, 2026, 2027].map(y => (
+                        <option key={y} value={y} className="bg-gray-900">{y}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
               </div>
               <button onClick={() => setShowHistoryModal(false)} className="text-gray-500 hover:text-white text-3xl">&times;</button>
             </div>

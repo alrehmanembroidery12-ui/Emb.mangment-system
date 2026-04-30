@@ -20,14 +20,23 @@ exports.addTransaction = async (req, res) => {
   }
 };
 
-// Get transaction history for a specific worker
+// Get transaction history for a specific worker with month/year filtering
 exports.getWorkerTransactions = async (req, res) => {
   const { worker_id } = req.params;
+  const { month, year } = req.query;
+  
   try {
-    const result = await db.query(
-      'SELECT * FROM worker_transactions WHERE worker_id = $1 AND factory_id = $2 ORDER BY transaction_date DESC',
-      [worker_id, req.user.factory_id]
-    );
+    let query = 'SELECT * FROM worker_transactions WHERE worker_id = $1 AND factory_id = $2';
+    const params = [worker_id, req.user.factory_id];
+    
+    if (month && year) {
+      query += ' AND EXTRACT(MONTH FROM transaction_date) = $3 AND EXTRACT(YEAR FROM transaction_date) = $4';
+      params.push(month, year);
+    }
+    
+    query += ' ORDER BY transaction_date DESC';
+    
+    const result = await db.query(query, params);
     res.json(result.rows);
   } catch (err) {
     console.error(err);
