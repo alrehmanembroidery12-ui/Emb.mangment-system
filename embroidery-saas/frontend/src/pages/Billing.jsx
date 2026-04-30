@@ -236,14 +236,14 @@ const Billing = () => {
                 <h3 className="bg-green-100 text-green-800 px-4 py-2 rounded-lg font-black uppercase text-xs mb-4">Incomes (Client Payments)</h3>
                 <table className="w-full text-xs">
                    <thead className="border-b border-gray-900 font-bold">
-                     <tr><th className="py-2">Date</th><th>Ref</th><th className="text-right">Amount</th></tr>
+                     <tr><th className="py-2 text-left">Date</th><th className="text-left">Ref</th><th className="text-right">Amount</th></tr>
                    </thead>
                    <tbody>
                      {factoryReport.income.map(t => (
                        <tr key={t.id} className="border-b border-gray-50">
                          <td className="py-3">{new Date(t.transaction_date).toLocaleDateString()}</td>
                          <td>{t.description || 'Payment'}</td>
-                         <td className="text-right font-bold text-green-600">₨ {parseFloat(t.debit).toLocaleString()}</td>
+                         <td className="text-right font-bold text-green-600">₨ {parseFloat(t.credit || 0).toLocaleString()}</td>
                        </tr>
                      ))}
                      {factoryReport.income.length === 0 && <tr><td colSpan="3" className="py-10 text-center text-gray-400">No income records</td></tr>}
@@ -254,14 +254,14 @@ const Billing = () => {
                 <h3 className="bg-red-100 text-red-800 px-4 py-2 rounded-lg font-black uppercase text-xs mb-4">Expenses (Worker Payments)</h3>
                 <table className="w-full text-xs">
                    <thead className="border-b border-gray-900 font-bold">
-                     <tr><th className="py-2">Date</th><th>Ref</th><th className="text-right">Amount</th></tr>
+                     <tr><th className="py-2 text-left">Date</th><th className="text-left">Ref</th><th className="text-right">Amount</th></tr>
                    </thead>
                    <tbody>
                      {factoryReport.expense.map(t => (
                        <tr key={t.id} className="border-b border-gray-50">
                          <td className="py-3">{new Date(t.transaction_date).toLocaleDateString()}</td>
                          <td>{t.description || 'Advance/Salary'}</td>
-                         <td className="text-right font-bold text-red-600">₨ {parseFloat(t.debit).toLocaleString()}</td>
+                         <td className="text-right font-bold text-red-600">₨ {parseFloat(t.amount || t.debit || 0).toLocaleString()}</td>
                        </tr>
                      ))}
                      {factoryReport.expense.length === 0 && <tr><td colSpan="3" className="py-10 text-center text-gray-400">No expense records</td></tr>}
@@ -274,15 +274,15 @@ const Billing = () => {
                <div className="grid grid-cols-3 gap-6">
                  <div className="bg-gray-50 p-6 rounded-2xl text-center">
                    <p className="text-xs text-gray-500 font-bold uppercase mb-1">Total Cash In</p>
-                   <p className="text-2xl font-black text-green-600">₨ {factoryReport.income.reduce((acc, t) => acc + parseFloat(t.debit), 0).toLocaleString()}</p>
+                   <p className="text-2xl font-black text-green-600">₨ {factoryReport.income.reduce((acc, t) => acc + parseFloat(t.credit || 0), 0).toLocaleString()}</p>
                  </div>
                  <div className="bg-gray-50 p-6 rounded-2xl text-center">
                    <p className="text-xs text-gray-500 font-bold uppercase mb-1">Total Cash Out</p>
-                   <p className="text-2xl font-black text-red-600">₨ {factoryReport.expense.reduce((acc, t) => acc + parseFloat(t.debit), 0).toLocaleString()}</p>
+                   <p className="text-2xl font-black text-red-600">₨ {factoryReport.expense.reduce((acc, t) => acc + parseFloat(t.amount || t.debit || 0), 0).toLocaleString()}</p>
                  </div>
                  <div className="bg-blue-600 p-6 rounded-2xl text-center text-white shadow-xl shadow-blue-600/20">
                    <p className="text-xs font-bold uppercase mb-1 opacity-80">Net Cash Flow</p>
-                   <p className="text-2xl font-black">₨ {(factoryReport.income.reduce((acc, t) => acc + parseFloat(t.debit), 0) - factoryReport.expense.reduce((acc, t) => acc + parseFloat(t.debit), 0)).toLocaleString()}</p>
+                   <p className="text-2xl font-black">₨ {(factoryReport.income.reduce((acc, t) => acc + parseFloat(t.credit || 0), 0) - factoryReport.expense.reduce((acc, t) => acc + parseFloat(t.amount || t.debit || 0), 0)).toLocaleString()}</p>
                  </div>
                </div>
             </div>
