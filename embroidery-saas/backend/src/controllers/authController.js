@@ -104,7 +104,15 @@ exports.login = async (req, res) => {
       }
     });
   } catch (err) {
-    console.error('Login Error Details:', err);
-    res.status(500).json({ message: 'Server Error during login', error: err.message });
+    console.error('CRITICAL LOGIN ERROR:', {
+      message: err.message,
+      stack: err.stack,
+      email: email
+    });
+    res.status(500).json({ 
+      message: 'Server Error during login', 
+      error: err.message,
+      details: process.env.NODE_ENV === 'development' ? err.stack : undefined
+    });
   }
 };

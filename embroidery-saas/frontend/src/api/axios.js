@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const apiURL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const apiURL = import.meta.env.VITE_API_URL || 'https://embroidery-backend-nine.vercel.app';
 
 const instance = axios.create({
   baseURL: apiURL,

@@ -99,8 +99,8 @@ async function seed() {
         ];
         for (const e of ledger) {
             await pool.query(
-                'INSERT INTO client_transactions (factory_id, client_id, amount, transaction_type, description, credit, debit) VALUES ($1, $2, $3, $4, $5, $6, $7)',
-                [factory_id, mainClientId, e.amount, e.type, e.desc, e.type === 'Credit' ? e.amount : 0, e.type === 'Debit' ? e.amount : 0]
+                'INSERT INTO client_transactions (factory_id, client_id, order_id, amount, transaction_type, description, credit, debit) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)',
+                [factory_id, mainClientId, null, e.amount, e.type, e.desc, e.type === 'Credit' ? e.amount : 0, e.type === 'Debit' ? e.amount : 0]
             );
         }
         console.log('Seeded Client Ledger');
@@ -122,6 +122,38 @@ async function seed() {
             );
         }
         console.log('Seeded Inventory');
+
+        // 8. Orders & Billing
+        const ts = Date.now().toString().slice(-4);
+        for (let i = 1; i <= 8; i++) {
+            const cId = clientIds[i % 10];
+            const price = 40000 + (i * 12000);
+            const orderRes = await pool.query(
+                'INSERT INTO orders (factory_id, client_id, order_number, status, total_price, due_date, fabric_quantity) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id',
+                [factory_id, cId, `ORD-D${ts}-${i}`, i % 2 === 0 ? 'Completed' : 'In-Production', price, '2026-12-25', 100 + (i * 10)]
+            );
+            const orderId = orderRes.rows[0].id;
+
+            // Add to Ledger (Debit)
+            await pool.query('INSERT INTO client_transactions (factory_id, client_id, order_id, amount, transaction_type, description, debit) VALUES ($1, $2, $3, $4, $5, $6, $7)',
+                [factory_id, cId, orderId, price, 'Debit', `Invoice for Order ORD-D${ts}-${i}`, price]);
+
+            // Create Invoice
+            const invRes = await pool.query(
+                'INSERT INTO invoices (factory_id, order_id, invoice_number, total_amount, tax_amount, status) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id',
+                [factory_id, orderId, `INV-D${ts}-${i}`, price, price * 0.05, i % 2 === 0 ? 'Paid' : 'Partially-Paid']
+            );
+            const invoiceId = invRes.rows[0].id;
+
+            // Create Payment (Credit)
+            const payAmount = i % 2 === 0 ? price : price * 0.4;
+            await pool.query('INSERT INTO payments (factory_id, invoice_id, amount, payment_method) VALUES ($1, $2, $3, $4)',
+                [factory_id, invoiceId, payAmount, 'Bank Transfer']);
+            
+            await pool.query('INSERT INTO client_transactions (factory_id, client_id, order_id, amount, transaction_type, description, credit) VALUES ($1, $2, $3, $4, $5, $6, $7)',
+                [factory_id, cId, orderId, payAmount, 'Credit', `Payment for Invoice INV-D${ts}-${i}`, payAmount]);
+        }
+        console.log('Seeded 8 Orders and Invoices');
 
         await pool.query('COMMIT');
         console.log('SUCCESS: All Demo Data Seeded!');

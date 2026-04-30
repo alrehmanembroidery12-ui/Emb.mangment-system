@@ -5,10 +5,13 @@ exports.addTransaction = async (req, res) => {
   const { worker_id, amount, transaction_type, description, transaction_date } = req.body;
   try {
     const date = transaction_date || new Date();
+    const credit = transaction_type === 'Credit' ? amount : 0;
+    const debit = transaction_type === 'Debit' ? amount : 0;
+
     const result = await db.query(
-      `INSERT INTO worker_transactions (factory_id, worker_id, amount, transaction_type, description, transaction_date) 
-       VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
-      [req.user.factory_id, worker_id, amount, transaction_type, description, date]
+      `INSERT INTO worker_transactions (factory_id, worker_id, amount, transaction_type, description, transaction_date, credit, debit) 
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`,
+      [req.user.factory_id, worker_id, amount, transaction_type, description, date, credit, debit]
     );
     res.status(201).json(result.rows[0]);
   } catch (err) {

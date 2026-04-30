@@ -18,10 +18,24 @@ async function check() {
     }
 
     // Check for users
-    const userRes = await pool.query("SELECT id, full_name, email FROM users WHERE email = 'demo@aa.com'");
+    const userRes = await pool.query("SELECT id, full_name, email, factory_id FROM users WHERE email = 'demo@aa.com'");
     console.log('Demo User found:', userRes.rowCount);
     if (userRes.rowCount > 0) {
         console.log('User Details:', userRes.rows[0]);
+        const factoryId = userRes.rows[0].factory_id;
+        
+        // Test JOIN query
+        try {
+            const joinRes = await pool.query(`
+                SELECT u.id, f.name as factory_name
+                FROM users u 
+                JOIN factories f ON u.factory_id = f.id 
+                WHERE u.email = 'demo@aa.com'
+            `);
+            console.log('JOIN test successful. Factory:', joinRes.rows[0]?.factory_name);
+        } catch (joinErr) {
+            console.error('JOIN test FAILED:', joinErr.message);
+        }
     }
 
     // Check for other data (workers)
