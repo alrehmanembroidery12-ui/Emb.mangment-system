@@ -78,6 +78,8 @@ CREATE TABLE machine_logs (
     machine_id INTEGER REFERENCES machines(id) ON DELETE CASCADE,
     worker_id INTEGER REFERENCES workers(id),
     stitches_count INTEGER DEFAULT 0,
+    shift VARCHAR(50),
+    downtime_minutes INTEGER DEFAULT 0,
     start_time TIMESTAMP,
     end_time TIMESTAMP,
     status VARCHAR(50)
