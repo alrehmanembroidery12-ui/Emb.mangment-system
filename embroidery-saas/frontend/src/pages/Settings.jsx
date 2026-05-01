@@ -58,7 +58,8 @@ const Settings = () => {
       setMessage({ type: 'success', text: 'Profile updated successfully!' });
       setTimeout(() => setMessage({ type: '', text: '' }), 3000);
     } catch (err) {
-      setMessage({ type: 'error', text: 'Failed to update profile' });
+      const errorMsg = err.response?.data?.message || err.response?.data?.error || 'Failed to update profile';
+      setMessage({ type: 'error', text: errorMsg });
     } finally {
       setLoading(false);
     }
