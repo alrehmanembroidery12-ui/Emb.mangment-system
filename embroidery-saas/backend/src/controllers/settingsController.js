@@ -49,14 +49,27 @@ exports.getFactoryProfile = async (req, res) => {
 
 exports.updateFactoryProfile = async (req, res) => {
   const { name, address, contact_phone } = req.body;
+  const factory_id = req.user.factory_id;
+
+  console.log('UPDATING PROFILE:', { name, address, contact_phone, factory_id });
+
   try {
+    if (!factory_id) {
+      return res.status(400).json({ message: 'Factory ID is missing from token' });
+    }
+
     const result = await db.query(
       'UPDATE factories SET name = $1, address = $2, contact_phone = $3 WHERE id = $4 RETURNING *',
-      [name, address, contact_phone, req.user.factory_id]
+      [name, address, contact_phone, factory_id]
     );
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: 'Factory not found' });
+    }
+
     res.json(result.rows[0]);
   } catch (err) {
-    console.error('Update Profile Error:', err);
+    console.error('Update Profile Error Details:', err);
     res.status(500).json({ message: 'Server Error', error: err.message });
   }
 };
