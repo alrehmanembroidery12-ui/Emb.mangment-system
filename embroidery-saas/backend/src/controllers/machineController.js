@@ -19,11 +19,38 @@ exports.addMachine = async (req, res) => {
 exports.logProduction = async (req, res) => {
   const { machine_id, worker_id, stitches_count, shift, downtime_minutes, start_time, end_time } = req.body;
   try {
+    // 1. Insert Machine Log
     const result = await db.query(
       `INSERT INTO machine_logs (factory_id, machine_id, worker_id, stitches_count, shift, downtime_minutes, start_time, end_time) 
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`,
       [req.user.factory_id, machine_id, worker_id, stitches_count, shift, downtime_minutes, start_time, end_time]
     );
+
+    // 2. Calculate and Apply Bonus if rules exist
+    const bonusRule = await db.query(
+      'SELECT * FROM bonus_rules WHERE factory_id = $1',
+      [req.user.factory_id]
+    );
+
+    if (bonusRule.rows.length > 0) {
+      const { min_stitches, bonus_amount } = bonusRule.rows[0];
+      if (min_stitches > 0 && stitches_count >= min_stitches) {
+        const bonusMultiplier = Math.floor(stitches_count / min_stitches);
+        const totalBonus = bonusMultiplier * bonus_amount;
+
+        if (totalBonus > 0) {
+          const machineName = await db.query('SELECT name FROM machines WHERE id = $1', [machine_id]);
+          const description = `Stitch Bonus: ${machineName.rows[0]?.name || 'Machine'} (${stitches_count} stitches)`;
+          
+          await db.query(
+            `INSERT INTO worker_transactions (factory_id, worker_id, amount, credit, debit, transaction_type, description) 
+             VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+            [req.user.factory_id, worker_id, totalBonus, totalBonus, 0, 'Credit', description]
+          );
+        }
+      }
+    }
+
     res.status(201).json(result.rows[0]);
   } catch (err) {
     console.error(err);

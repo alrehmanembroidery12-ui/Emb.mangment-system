@@ -9,6 +9,7 @@ import Orders from './pages/Orders';
 import Inventory from './pages/Inventory';
 import Billing from './pages/Billing';
 import Machines from './pages/Machines';
+import Settings from './pages/Settings';
 import Layout from './components/Layout';
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
@@ -57,6 +58,14 @@ function App() {
                       element={
                         <ProtectedRoute allowedRoles={['Admin', 'Manager']}>
                           <Billing />
+                        </ProtectedRoute>
+                      } 
+                    />
+                    <Route 
+                      path="settings" 
+                      element={
+                        <ProtectedRoute allowedRoles={['Admin']}>
+                          <Settings />
                         </ProtectedRoute>
                       } 
                     />

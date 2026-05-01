@@ -17,6 +17,7 @@ const machineRoutes = require('./src/routes/machineRoutes');
 const billingRoutes = require('./src/routes/billingRoutes');
 const dashboardRoutes = require('./src/routes/dashboardRoutes');
 const demoRoutes = require('./src/routes/demoRoutes');
+const settingsRoutes = require('./src/routes/settingsRoutes');
 
 const { authMiddleware, authorizeRoles } = require('./src/middleware/authMiddleware');
 const checkSubscription = require('./src/middleware/subscriptionMiddleware');
@@ -53,6 +54,7 @@ app.use('/api/client-transactions', authMiddleware, checkSubscription, readonlyM
 app.use('/api/machines', authMiddleware, checkSubscription, readonlyMiddleware, machineRoutes);
 app.use('/api/billing', authMiddleware, checkSubscription, readonlyMiddleware, billingRoutes);
 app.use('/api/reports', authMiddleware, checkSubscription, require('./src/routes/reportRoutes'));
+app.use('/api/settings', authMiddleware, checkSubscription, readonlyMiddleware, settingsRoutes);
 
 app.get('/', (req, res) => {
   res.json({ message: 'Embroidery SaaS Backend API is running' });
