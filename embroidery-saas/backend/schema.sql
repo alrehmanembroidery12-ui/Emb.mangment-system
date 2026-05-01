@@ -8,7 +8,7 @@ CREATE TABLE factories (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     address TEXT,
-    contact_phone VARCHAR(50),
+    phone VARCHAR(50),
     is_demo BOOLEAN DEFAULT FALSE,
     is_readonly BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP

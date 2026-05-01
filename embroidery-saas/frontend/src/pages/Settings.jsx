@@ -23,7 +23,7 @@ import {
 
 const Settings = () => {
   const [activeTab, setActiveTab] = useState('profile');
-  const [profile, setProfile] = useState({ name: '', address: '', contact_phone: '', subscription_plan: '', subscription_status: '', trial_ends_at: '' });
+  const [profile, setProfile] = useState({ name: '', address: '', phone: '', subscription_plan: '', subscription_status: '', trial_ends_at: '' });
   const [bonusRules, setBonusRules] = useState({ min_stitches: 0, bonus_amount: 0 });
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -196,8 +196,8 @@ const Settings = () => {
                         <input 
                           type="text" 
                           className="w-full bg-gray-800 border border-gray-700 rounded-xl py-3 pl-10 pr-3 text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
-                          value={profile.contact_phone}
-                          onChange={(e) => setProfile({...profile, contact_phone: e.target.value})}
+                          value={profile.phone}
+                          onChange={(e) => setProfile({...profile, phone: e.target.value})}
                           placeholder="Phone Number"
                         />
                       </div>

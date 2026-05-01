@@ -37,7 +37,7 @@ exports.updateBonusRules = async (req, res) => {
 exports.getFactoryProfile = async (req, res) => {
   try {
     const result = await db.query(
-      'SELECT name, address, contact_phone, subscription_status, subscription_plan, trial_ends_at FROM factories WHERE id = $1',
+      'SELECT name, address, phone, subscription_status, subscription_plan, trial_ends_at FROM factories WHERE id = $1',
       [req.user.factory_id]
     );
     res.json(result.rows[0]);
@@ -48,10 +48,10 @@ exports.getFactoryProfile = async (req, res) => {
 };
 
 exports.updateFactoryProfile = async (req, res) => {
-  const { name, address, contact_phone } = req.body;
+  const { name, address, phone } = req.body;
   const factory_id = req.user.factory_id;
 
-  console.log('UPDATING PROFILE:', { name, address, contact_phone, factory_id });
+  console.log('UPDATING PROFILE:', { name, address, phone, factory_id });
 
   try {
     if (!factory_id) {
@@ -59,8 +59,8 @@ exports.updateFactoryProfile = async (req, res) => {
     }
 
     const result = await db.query(
-      'UPDATE factories SET name = $1, address = $2, contact_phone = $3 WHERE id = $4 RETURNING *',
-      [name, address, contact_phone, factory_id]
+      'UPDATE factories SET name = $1, address = $2, phone = $3 WHERE id = $4 RETURNING *',
+      [name, address, phone, factory_id]
     );
     
     if (result.rows.length === 0) {
