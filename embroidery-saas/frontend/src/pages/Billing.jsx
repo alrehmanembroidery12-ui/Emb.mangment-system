@@ -11,6 +11,8 @@ const Billing = () => {
   const [startDate, setStartDate] = useState(new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().split('T')[0]);
   const [endDate, setEndDate] = useState(new Date().toISOString().split('T')[0]);
   const [selectedClientId, setSelectedClientId] = useState('');
+  const [selectedMachineId, setSelectedMachineId] = useState('all');
+  const [machines, setMachines] = useState([]);
   
   // Report Data
   const [reportData, setReportData] = useState([]);
@@ -19,6 +21,7 @@ const Billing = () => {
   useEffect(() => {
     fetchOverview();
     fetchClients();
+    fetchMachines();
   }, []);
 
   const fetchOverview = async () => {
@@ -41,6 +44,15 @@ const Billing = () => {
     try {
       const res = await api.get('/api/clients');
       setClients(res.data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const fetchMachines = async () => {
+    try {
+      const res = await api.get('/api/machines');
+      setMachines(res.data);
     } catch (err) {
       console.error(err);
     }
@@ -125,18 +137,29 @@ const Billing = () => {
       {activeTab === 'machine' && (
         <div className="space-y-6">
           <div className="bg-gray-900 p-6 rounded-2xl border border-gray-800 flex flex-wrap gap-4 items-end no-print">
-            <div className="flex-1">
+            <div className="flex-1 min-w-[200px]">
+              <label className="block text-xs font-bold text-gray-500 uppercase mb-2">Select Machine</label>
+              <select 
+                value={selectedMachineId} 
+                onChange={(e) => setSelectedMachineId(e.target.value)} 
+                className="w-full bg-gray-800 border border-gray-700 rounded-xl p-3 text-white outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="all">All Machines</option>
+                {machines.map(m => <option key={m.id} value={m.id}>{m.name}</option>)}
+              </select>
+            </div>
+            <div>
               <label className="block text-xs font-bold text-gray-500 uppercase mb-2">From Date</label>
               <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className="w-full bg-gray-800 border border-gray-700 rounded-xl p-3 text-white outline-none focus:ring-2 focus:ring-blue-500" />
             </div>
-            <div className="flex-1">
+            <div>
               <label className="block text-xs font-bold text-gray-500 uppercase mb-2">To Date</label>
               <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className="w-full bg-gray-800 border border-gray-700 rounded-xl p-3 text-white outline-none focus:ring-2 focus:ring-blue-500" />
             </div>
             <button 
               onClick={async () => {
                 try {
-                  const res = await api.get(`/api/reports/machine?start_date=${startDate}&end_date=${endDate}`);
+                  const res = await api.get(`/api/reports/machine?machine_id=${selectedMachineId}&start_date=${startDate}&end_date=${endDate}`);
                   setReportData(res.data);
                 } catch (err) {
                   alert('Machine report generate kernay main masla hua');

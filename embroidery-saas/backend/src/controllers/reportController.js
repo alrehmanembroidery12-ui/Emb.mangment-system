@@ -61,12 +61,12 @@ exports.getFactoryReport = async (req, res) => {
   }
 };
 exports.getMachineReport = async (req, res) => {
-  const { start_date, end_date } = req.query;
+  const { machine_id, start_date, end_date } = req.query;
   const { factory_id } = req.user;
 
   try {
-    const result = await db.query(
-      `SELECT 
+    let query = `
+      SELECT 
         m.name as machine_name,
         ml.shift,
         SUM(ml.stitches_count) as total_stitches,
@@ -75,11 +75,22 @@ exports.getMachineReport = async (req, res) => {
        FROM machines m
        LEFT JOIN machine_logs ml ON m.id = ml.machine_id
        WHERE m.factory_id = $1 
-       AND (ml.start_time::date BETWEEN $2::date AND $3::date OR ml.start_time IS NULL)
-       GROUP BY m.name, ml.shift
-       ORDER BY m.name ASC`,
-      [factory_id, start_date, end_date]
-    );
+    `;
+    const params = [factory_id];
+
+    if (machine_id && machine_id !== 'all') {
+      query += ` AND m.id = $${params.length + 1}`;
+      params.push(machine_id);
+    }
+
+    if (start_date && end_date) {
+      query += ` AND (ml.start_time::date BETWEEN $${params.length + 1}::date AND $${params.length + 2}::date OR ml.start_time IS NULL)`;
+      params.push(start_date, end_date);
+    }
+
+    query += ` GROUP BY m.name, ml.shift ORDER BY m.name ASC`;
+
+    const result = await db.query(query, params);
     res.json(result.rows);
   } catch (err) {
     console.error(err);
