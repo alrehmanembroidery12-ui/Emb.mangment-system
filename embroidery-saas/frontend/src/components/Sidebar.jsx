@@ -7,20 +7,33 @@ import {
   Package, 
   Settings, 
   CreditCard,
-  PlusCircle
+  PlusCircle,
+  Cpu
 } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 const Sidebar = () => {
   const location = useLocation();
+  const { user } = useAuth();
 
   const menuItems = [
-    { name: 'Dashboard', icon: <LayoutDashboard size={20} />, path: '/dashboard' },
-    { name: 'Workers', icon: <Users size={20} />, path: '/workers' },
-    { name: 'Orders', icon: <ShoppingCart size={20} />, path: '/orders' },
-    { name: 'Inventory', icon: <Package size={20} />, path: '/inventory' },
-    { name: 'Billing', icon: <CreditCard size={20} />, path: '/billing' },
-    { name: 'Settings', icon: <Settings size={20} />, path: '/settings' },
+    { name: 'Dashboard', icon: <LayoutDashboard size={20} />, path: '/dashboard', roles: ['Admin', 'Manager', 'Operator'] },
+    { name: 'Workers', icon: <Users size={20} />, path: '/workers', roles: ['Admin', 'Manager'] },
+    { name: 'Machines', icon: <Cpu size={20} />, path: '/machines', roles: ['Admin', 'Manager', 'Operator'] },
+    { name: 'Orders', icon: <ShoppingCart size={20} />, path: '/orders', roles: ['Admin', 'Manager', 'Operator'] },
+    { name: 'Inventory', icon: <Package size={20} />, path: '/inventory', roles: ['Admin', 'Manager'] },
+    { name: 'Billing', icon: <CreditCard size={20} />, path: '/billing', roles: ['Admin', 'Manager'] },
+    { name: 'Settings', icon: <Settings size={20} />, path: '/settings', roles: ['Admin'] },
   ];
+
+  const filteredItems = menuItems.filter(item => {
+    if (!user?.role) return false;
+    const userRole = user.role.toLowerCase();
+    return item.roles.some(role => {
+      const r = role.toLowerCase();
+      return r === userRole;
+    });
+  });
 
   return (
     <div className="w-64 bg-gray-900 border-r border-gray-800 h-screen flex flex-col relative flex-shrink-0">
@@ -31,7 +44,7 @@ const Sidebar = () => {
       </div>
 
       <nav className="flex-1 px-4 space-y-2 mt-4">
-        {menuItems.map((item) => (
+        {filteredItems.map((item) => (
           <Link
             key={item.name}
             to={item.path}

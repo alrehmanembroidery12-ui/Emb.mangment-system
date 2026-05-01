@@ -77,6 +77,7 @@ const Billing = () => {
           <button onClick={() => setActiveTab('overview')} className={`px-6 py-2.5 rounded-xl font-bold transition-all ${activeTab === 'overview' ? 'bg-blue-600 text-white shadow-lg' : 'text-gray-500 hover:text-white'}`}>Overview</button>
           <button onClick={() => setActiveTab('client')} className={`px-6 py-2.5 rounded-xl font-bold transition-all ${activeTab === 'client' ? 'bg-blue-600 text-white shadow-lg' : 'text-gray-500 hover:text-white'}`}>Client Ledger</button>
           <button onClick={() => setActiveTab('factory')} className={`px-6 py-2.5 rounded-xl font-bold transition-all ${activeTab === 'factory' ? 'bg-blue-600 text-white shadow-lg' : 'text-gray-500 hover:text-white'}`}>Factory Report</button>
+          <button onClick={() => setActiveTab('machine')} className={`px-6 py-2.5 rounded-xl font-bold transition-all ${activeTab === 'machine' ? 'bg-blue-600 text-white shadow-lg' : 'text-gray-500 hover:text-white'}`}>Machine Reports</button>
         </div>
         <div className="flex space-x-3">
           <button onClick={handlePrint} className="bg-gray-800 hover:bg-gray-700 text-white px-5 py-2.5 rounded-xl font-semibold transition-all border border-gray-700 flex items-center space-x-2">
@@ -119,6 +120,84 @@ const Billing = () => {
             </div>
           </div>
         </>
+      )}
+
+      {activeTab === 'machine' && (
+        <div className="space-y-6">
+          <div className="bg-gray-900 p-6 rounded-2xl border border-gray-800 flex flex-wrap gap-4 items-end no-print">
+            <div className="flex-1">
+              <label className="block text-xs font-bold text-gray-500 uppercase mb-2">From Date</label>
+              <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className="w-full bg-gray-800 border border-gray-700 rounded-xl p-3 text-white outline-none focus:ring-2 focus:ring-blue-500" />
+            </div>
+            <div className="flex-1">
+              <label className="block text-xs font-bold text-gray-500 uppercase mb-2">To Date</label>
+              <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className="w-full bg-gray-800 border border-gray-700 rounded-xl p-3 text-white outline-none focus:ring-2 focus:ring-blue-500" />
+            </div>
+            <button 
+              onClick={async () => {
+                try {
+                  const res = await api.get(`/api/reports/machine?start_date=${startDate}&end_date=${endDate}`);
+                  setReportData(res.data);
+                } catch (err) {
+                  alert('Machine report generate kernay main masla hua');
+                }
+              }} 
+              className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-xl font-bold transition-all shadow-lg shadow-blue-600/20"
+            >
+              Generate Machine Report
+            </button>
+          </div>
+
+          <div className="bg-white text-black p-10 rounded-2xl shadow-2xl print:m-0 print:shadow-none min-h-[800px]">
+            <div className="flex justify-between items-start border-b-2 border-gray-100 pb-8 mb-8">
+              <div>
+                <h2 className="text-3xl font-black uppercase tracking-tighter text-blue-600">Machine Performance Report</h2>
+                <p className="text-gray-500 mt-1 font-bold">Production & Efficiency Analysis</p>
+                <p className="text-gray-400 text-xs mt-1 italic">Date Range: {startDate} to {endDate}</p>
+              </div>
+              <div className="text-right">
+                <h3 className="font-bold text-lg">Embroidery Factory Pro</h3>
+                <p className="text-gray-400 text-xs">Generated: {new Date().toLocaleString()}</p>
+              </div>
+            </div>
+
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="border-b-2 border-gray-900 text-xs font-black uppercase">
+                  <th className="py-4 px-2">Machine Name</th>
+                  <th className="py-4 px-2">Shift</th>
+                  <th className="py-4 px-2 text-right">Total Stitches</th>
+                  <th className="py-4 px-2 text-right">Downtime (Min)</th>
+                  <th className="py-4 px-2 text-right">Logs</th>
+                  <th className="py-4 px-2 text-right">Avg Stitches/Log</th>
+                </tr>
+              </thead>
+              <tbody className="text-sm">
+                {reportData.length > 0 ? (
+                  reportData.map((m, idx) => (
+                    <tr key={idx} className="border-b border-gray-100">
+                      <td className="py-4 px-2 font-bold">{m.machine_name}</td>
+                      <td className="py-4 px-2">{m.shift || 'N/A'}</td>
+                      <td className="py-4 px-2 text-right font-bold text-blue-600">{parseInt(m.total_stitches || 0).toLocaleString()}</td>
+                      <td className="py-4 px-2 text-right text-red-500">{m.total_downtime || 0} min</td>
+                      <td className="py-4 px-2 text-right">{m.log_entries}</td>
+                      <td className="py-4 px-2 text-right font-black">
+                        {m.log_entries > 0 ? Math.round(m.total_stitches / m.log_entries).toLocaleString() : 0}
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr><td colSpan="6" className="py-20 text-center text-gray-400 italic">No machine records found for this period.</td></tr>
+                )}
+              </tbody>
+            </table>
+
+            <div className="mt-12 p-6 bg-blue-50 rounded-2xl border border-blue-100">
+              <p className="text-xs text-blue-800 font-bold uppercase mb-2">Efficiency Insight</p>
+              <p className="text-sm text-blue-900 leading-relaxed">Zyada downtime wali machines ki maintenance check karain aur jin machines ka stitch count zyada hai unka usage balance karain.</p>
+            </div>
+          </div>
+        </div>
       )}
 
       {activeTab === 'client' && (
