@@ -12,8 +12,8 @@ const Workers = () => {
   const [showTransactionModal, setShowTransactionModal] = useState(false);
   const [selectedWorker, setSelectedWorker] = useState(null);
   const [workerTransactions, setWorkerTransactions] = useState([]);
-  const [formData, setFormData] = useState({ name: '', phone: '', salary_type: 'Fixed', base_salary: 0, bonus: 0, advance: 0 });
-  const [transData, setTransData] = useState({ amount: 0, type: 'Credit', description: 'Daily Performance Bonus', date: new Date().toISOString().split('T')[0] });
+  const [formData, setFormData] = useState({ name: '', phone: '', salary_type: 'Fixed', base_salary: '', bonus: '', advance: '' });
+  const [transData, setTransData] = useState({ amount: '', type: 'Credit', description: 'Daily Performance Bonus', date: new Date().toISOString().split('T')[0] });
   const [historyMonth, setHistoryMonth] = useState(new Date().getMonth() + 1);
   const [historyYear, setHistoryYear] = useState(new Date().getFullYear());
   const [loadingSalary, setLoadingSalary] = useState(false);
@@ -78,13 +78,23 @@ const Workers = () => {
     e.preventDefault();
     try {
       if (selectedWorker) {
-        await api.put(`/api/workers/${selectedWorker.id}`, formData);
+        await api.put(`/api/workers/${selectedWorker.id}`, {
+          ...formData,
+          base_salary: Number(formData.base_salary) || 0,
+          bonus: Number(formData.bonus) || 0,
+          advance: Number(formData.advance) || 0
+        });
       } else {
-        await api.post('/api/workers', formData);
+        await api.post('/api/workers', {
+          ...formData,
+          base_salary: Number(formData.base_salary) || 0,
+          bonus: Number(formData.bonus) || 0,
+          advance: Number(formData.advance) || 0
+        });
       }
       setShowModal(false);
       fetchWorkers();
-      setFormData({ name: '', phone: '', salary_type: 'Fixed', base_salary: 0, bonus: 0, advance: 0 });
+      setFormData({ name: '', phone: '', salary_type: 'Fixed', base_salary: '', bonus: '', advance: '' });
       setSelectedWorker(null);
     } catch (err) {
       console.error('Error saving worker', err);
@@ -96,14 +106,14 @@ const Workers = () => {
     try {
       await api.post('/api/transactions', {
         worker_id: selectedWorker.id,
-        amount: transData.amount,
+        amount: Number(transData.amount) || 0,
         transaction_type: transData.type,
         description: transData.description,
         transaction_date: transData.date
       });
       setShowTransactionModal(false);
       fetchWorkers();
-      setTransData({ amount: 0, type: 'Credit', description: 'Daily Performance Bonus', date: new Date().toISOString().split('T')[0] });
+      setTransData({ amount: '', type: 'Credit', description: 'Daily Performance Bonus', date: new Date().toISOString().split('T')[0] });
     } catch (err) {
       console.error('Error adding transaction', err);
     }
@@ -131,7 +141,7 @@ const Workers = () => {
           <button 
             onClick={() => {
               setSelectedWorker(null);
-              setFormData({ name: '', phone: '', salary_type: 'Fixed', base_salary: 0, bonus: 0, advance: 0 });
+              setFormData({ name: '', phone: '', salary_type: 'Fixed', base_salary: '', bonus: '', advance: '' });
               setShowModal(true);
             }}
             className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 px-6 py-2.5 rounded-xl font-semibold transition-all shadow-lg shadow-blue-600/20"
@@ -249,8 +259,8 @@ const Workers = () => {
                         setSelectedWorker(worker); 
                         setFormData({
                           ...worker,
-                          bonus: 0,
-                          advance: 0
+                          bonus: '',
+                          advance: ''
                         }); 
                         setShowModal(true); 
                       }}

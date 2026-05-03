@@ -5,9 +5,9 @@ import { Search, Plus, Edit2, Trash2, Cpu, Activity, Clock, Settings, User, Aler
 const ProductionLogModal = ({ machine, workers, onClose, onSuccess }) => {
   const [logData, setLogData] = useState({
     worker_id: '',
-    stitches_count: 0,
+    stitches_count: '',
     shift: 'Day',
-    downtime_minutes: 0,
+    downtime_minutes: '',
     start_time: new Date().toISOString().split('T')[0] + 'T09:00',
     end_time: new Date().toISOString().split('T')[0] + 'T21:00'
   });
@@ -17,7 +17,9 @@ const ProductionLogModal = ({ machine, workers, onClose, onSuccess }) => {
     try {
       await api.post('/api/machines/log', {
         machine_id: machine.id,
-        ...logData
+        ...logData,
+        stitches_count: Number(logData.stitches_count) || 0,
+        downtime_minutes: Number(logData.downtime_minutes) || 0
       });
       alert('Production logged successfully!');
       onSuccess();
@@ -144,7 +146,7 @@ const Machines = () => {
   const [formData, setFormData] = useState({
     name: '',
     model_number: '',
-    total_heads: 1,
+    total_heads: '',
     status: 'Active'
   });
 
@@ -181,7 +183,7 @@ const Machines = () => {
       }
       setShowModal(false);
       fetchMachines();
-      setFormData({ name: '', model_number: '', total_heads: 1, status: 'Active' });
+      setFormData({ name: '', model_number: '', total_heads: '', status: 'Active' });
       setSelectedMachine(null);
     } catch (err) {
       console.error('Error saving machine', err);
@@ -217,7 +219,7 @@ const Machines = () => {
         <button 
           onClick={() => {
             setSelectedMachine(null);
-            setFormData({ name: '', model_number: '', total_heads: 1, status: 'Active' });
+            setFormData({ name: '', model_number: '', total_heads: '', status: 'Active' });
             setShowModal(true);
           }}
           className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 px-6 py-2.5 rounded-xl font-semibold transition-all shadow-lg shadow-blue-600/20"

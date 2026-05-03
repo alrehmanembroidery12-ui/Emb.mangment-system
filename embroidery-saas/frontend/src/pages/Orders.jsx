@@ -20,16 +20,16 @@ const Orders = () => {
   const [formData, setFormData] = useState({
     client_id: '',
     order_number: '',
-    total_price: 0,
-    advance_paid: 0,
-    production_cost: 0,
-    fabric_quantity: 0,
+    total_price: '',
+    advance_paid: '',
+    production_cost: '',
+    fabric_quantity: '',
     due_date: ''
   });
   
   const [clientSearchTerm, setClientSearchTerm] = useState('');
   const [clientData, setClientData] = useState({ name: '', shop_name: '', phone: '', address: '' });
-  const [paymentData, setPaymentData] = useState({ amount: 0, description: 'Balance Payment', date: new Date().toISOString().split('T')[0] });
+  const [paymentData, setPaymentData] = useState({ amount: '', description: 'Balance Payment', date: new Date().toISOString().split('T')[0] });
 
   useEffect(() => {
     fetchOrders();
@@ -68,11 +68,17 @@ const Orders = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await api.post('/api/orders', formData);
+      const res = await api.post('/api/orders', {
+        ...formData,
+        total_price: Number(formData.total_price) || 0,
+        advance_paid: Number(formData.advance_paid) || 0,
+        production_cost: Number(formData.production_cost) || 0,
+        fabric_quantity: Number(formData.fabric_quantity) || 0
+      });
       setShowModal(false);
       fetchOrders();
       fetchClients();
-      setFormData({ client_id: '', order_number: '', total_price: 0, advance_paid: 0, production_cost: 0, fabric_quantity: 0, due_date: '' });
+      setFormData({ client_id: '', order_number: '', total_price: '', advance_paid: '', production_cost: '', fabric_quantity: '', due_date: '' });
       alert('Order created successfully!');
     } catch (err) {
       console.error('Order creation error:', err.response?.data);
@@ -99,7 +105,7 @@ const Orders = () => {
     try {
       await api.post('/api/client-transactions', {
         client_id: selectedClient.id,
-        amount: paymentData.amount,
+        amount: Number(paymentData.amount) || 0,
         transaction_type: 'Credit',
         description: paymentData.description,
         transaction_date: paymentData.date
@@ -144,7 +150,7 @@ const Orders = () => {
             setShowClientModal(true);
           }} className="bg-gray-800 hover:bg-gray-700 border border-gray-700 px-6 py-2.5 rounded-xl font-semibold flex items-center space-x-2 transition-all"><UserPlus size={18} /><span>Add Client</span></button>
           <button onClick={() => {
-            setFormData({ client_id: '', order_number: '', total_price: 0, advance_paid: 0, production_cost: 0, fabric_quantity: 0, due_date: '' });
+            setFormData({ client_id: '', order_number: '', total_price: '', advance_paid: '', production_cost: '', fabric_quantity: '', due_date: '' });
             setClientSearchTerm('');
             setShowModal(true);
           }} className="bg-blue-600 hover:bg-blue-700 px-6 py-2.5 rounded-xl font-semibold flex items-center space-x-2 transition-all shadow-lg shadow-blue-600/20"><Plus size={18} /><span>New Order</span></button>

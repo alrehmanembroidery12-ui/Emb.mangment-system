@@ -17,17 +17,17 @@ const Inventory = () => {
     item_name: '',
     item_code: '',
     category: 'Thread',
-    quantity: 0,
+    quantity: '',
     unit: 'Cones',
     min_stock_level: 5,
-    unit_price: 0
+    unit_price: ''
   });
 
   const [transData, setTransData] = useState({
-    quantity: 0,
+    quantity: '',
     transaction_type: 'In',
     description: '',
-    bill_amount: 0,
+    bill_amount: '',
     transaction_date: new Date().toISOString().split('T')[0]
   });
 
@@ -57,17 +57,27 @@ const Inventory = () => {
     e.preventDefault();
     try {
       if (isEditing) {
-        await api.put(`/api/inventory/${selectedItem.id}`, formData);
+        await api.put(`/api/inventory/${selectedItem.id}`, {
+          ...formData,
+          quantity: Number(formData.quantity) || 0,
+          unit_price: Number(formData.unit_price) || 0,
+          min_stock_level: Number(formData.min_stock_level) || 0
+        });
         alert('Item updated successfully!');
       } else {
-        await api.post('/api/inventory', formData);
+        await api.post('/api/inventory', {
+          ...formData,
+          quantity: Number(formData.quantity) || 0,
+          unit_price: Number(formData.unit_price) || 0,
+          min_stock_level: Number(formData.min_stock_level) || 0
+        });
         alert('Item added successfully!');
       }
       setShowModal(false);
       setIsEditing(false);
       setSelectedItem(null);
       fetchInventory();
-      setFormData({ item_name: '', item_code: '', category: 'Thread', quantity: 0, unit: 'Cones', min_stock_level: 5, unit_price: 0 });
+      setFormData({ item_name: '', item_code: '', category: 'Thread', quantity: '', unit: 'Cones', min_stock_level: 5, unit_price: '' });
     } catch (err) {
       alert('Error: ' + (err.response?.data || err.message));
     }
@@ -93,11 +103,13 @@ const Inventory = () => {
     try {
       await api.post('/api/inventory/transaction', {
         item_id: selectedItem.id,
-        ...transData
+        ...transData,
+        quantity: Number(transData.quantity) || 0,
+        bill_amount: Number(transData.bill_amount) || 0
       });
       setShowTransactionModal(false);
       fetchInventory();
-      setTransData({ quantity: 0, transaction_type: 'In', description: '', bill_amount: 0, transaction_date: new Date().toISOString().split('T')[0] });
+      setTransData({ quantity: '', transaction_type: 'In', description: '', bill_amount: '', transaction_date: new Date().toISOString().split('T')[0] });
       alert('Transaction logged successfully!');
     } catch (err) {
       alert('Error: ' + (err.response?.data || err.message));
@@ -118,7 +130,7 @@ const Inventory = () => {
           <p className="text-gray-500 text-sm mt-1">Track Threads, Bobbins, and Spare Parts</p>
         </div>
         <button 
-          onClick={() => { setIsEditing(false); setFormData({ item_name: '', item_code: '', category: 'Thread', quantity: 0, unit: 'Cones', min_stock_level: 5 }); setShowModal(true); }}
+          onClick={() => { setIsEditing(false); setFormData({ item_name: '', item_code: '', category: 'Thread', quantity: '', unit: 'Cones', min_stock_level: 5, unit_price: '' }); setShowModal(true); }}
           className="bg-purple-600 hover:bg-purple-700 px-6 py-2.5 rounded-xl font-semibold flex items-center space-x-2 transition-all shadow-lg shadow-purple-600/20"
         >
           <Plus size={18} />
