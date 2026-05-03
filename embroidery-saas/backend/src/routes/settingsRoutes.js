@@ -14,5 +14,6 @@ router.post('/users', authMiddleware, settingsController.addUser);
 router.delete('/users/:id', authMiddleware, settingsController.deleteUser);
 
 router.get('/export', authMiddleware, settingsController.exportAllData);
+router.post('/import', authMiddleware, settingsController.importData);
 
 module.exports = router;

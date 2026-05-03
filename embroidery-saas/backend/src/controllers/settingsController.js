@@ -153,3 +153,107 @@ exports.exportAllData = async (req, res) => {
     res.status(500).send('Server Error');
   }
 };
+
+exports.importData = async (req, res) => {
+  const factory_id = req.user.factory_id;
+  const data = req.body;
+
+  if (!data || typeof data !== 'object') {
+    return res.status(400).json({ message: 'Invalid backup data' });
+  }
+
+  const client = await db.connect();
+  try {
+    await client.query('BEGIN');
+
+    // 1. Clear existing data for this factory (in reverse order of dependencies)
+    await client.query('DELETE FROM machine_logs WHERE factory_id = $1', [factory_id]);
+    await client.query('DELETE FROM worker_transactions WHERE factory_id = $1', [factory_id]);
+    await client.query('DELETE FROM orders WHERE factory_id = $1', [factory_id]);
+    await client.query('DELETE FROM inventory WHERE factory_id = $1', [factory_id]);
+    await client.query('DELETE FROM machines WHERE factory_id = $1', [factory_id]);
+    await client.query('DELETE FROM workers WHERE factory_id = $1', [factory_id]);
+    await client.query('DELETE FROM clients WHERE factory_id = $1', [factory_id]);
+
+    // 2. Insert new data (in order of dependencies)
+    
+    // Clients
+    if (data.clients) {
+      for (const c of data.clients) {
+        await client.query(
+          'INSERT INTO clients (id, factory_id, name, shop_name, phone, address, balance) VALUES ($1, $2, $3, $4, $5, $6, $7)',
+          [c.id, factory_id, c.name, c.shop_name, c.phone, c.address, c.balance]
+        );
+      }
+    }
+
+    // Workers
+    if (data.workers) {
+      for (const w of data.workers) {
+        await client.query(
+          'INSERT INTO workers (id, factory_id, name, phone, salary_type, base_salary, is_active) VALUES ($1, $2, $3, $4, $5, $6, $7)',
+          [w.id, factory_id, w.name, w.phone, w.salary_type, w.base_salary, w.is_active]
+        );
+      }
+    }
+
+    // Machines
+    if (data.machines) {
+      for (const m of data.machines) {
+        await client.query(
+          'INSERT INTO machines (id, factory_id, name, model_number, total_heads, status) VALUES ($1, $2, $3, $4, $5, $6)',
+          [m.id, factory_id, m.name, m.model_number, m.total_heads, m.status]
+        );
+      }
+    }
+
+    // Inventory
+    if (data.inventory) {
+      for (const i of data.inventory) {
+        await client.query(
+          'INSERT INTO inventory (id, factory_id, item_name, item_code, category, quantity, unit, min_stock_level, unit_price) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)',
+          [i.id, factory_id, i.item_name, i.item_code, i.category, i.quantity, i.unit, i.min_stock_level, i.unit_price]
+        );
+      }
+    }
+
+    // Orders
+    if (data.orders) {
+      for (const o of data.orders) {
+        await client.query(
+          'INSERT INTO orders (id, factory_id, client_id, order_number, status, total_price, advance_paid, production_cost, fabric_quantity, due_date) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)',
+          [o.id, factory_id, o.client_id, o.order_number, o.status, o.total_price, o.advance_paid, o.production_cost, o.fabric_quantity, o.due_date]
+        );
+      }
+    }
+
+    // Machine Logs
+    if (data.machine_logs) {
+      for (const l of data.machine_logs) {
+        await client.query(
+          'INSERT INTO machine_logs (id, factory_id, machine_id, worker_id, stitches_count, shift, downtime_minutes, start_time, end_time) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)',
+          [l.id, factory_id, l.machine_id, l.worker_id, l.stitches_count, l.shift, l.downtime_minutes, l.start_time, l.end_time]
+        );
+      }
+    }
+
+    // Worker Transactions
+    if (data.worker_transactions) {
+      for (const t of data.worker_transactions) {
+        await client.query(
+          'INSERT INTO worker_transactions (id, factory_id, worker_id, amount, transaction_type, description, transaction_date) VALUES ($1, $2, $3, $4, $5, $6, $7)',
+          [t.id, factory_id, t.worker_id, t.amount, t.transaction_type, t.description, t.transaction_date]
+        );
+      }
+    }
+
+    await client.query('COMMIT');
+    res.json({ message: 'Data imported successfully' });
+  } catch (err) {
+    await client.query('ROLLBACK');
+    console.error('Import Error:', err);
+    res.status(500).json({ message: 'Error importing data', error: err.message });
+  } finally {
+    client.release();
+  }
+};

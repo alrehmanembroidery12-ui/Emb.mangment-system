@@ -106,6 +106,29 @@ const Settings = () => {
     }
   };
 
+  const handleImportData = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    if (!window.confirm('WARNING: Importing data will overwrite existing records. Are you sure?')) {
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = async (event) => {
+      try {
+        const jsonData = JSON.parse(event.target.result);
+        await api.post('/api/settings/import', jsonData);
+        alert('Data imported successfully! The page will now refresh.');
+        window.location.reload();
+      } catch (err) {
+        console.error('Import error:', err);
+        alert('Failed to import data. Please ensure the file is a valid backup.');
+      }
+    };
+    reader.readAsText(file);
+  };
+
   const handleExportData = async () => {
     try {
       const res = await api.get('/api/settings/export');
@@ -408,10 +431,18 @@ const Settings = () => {
                       <Download size={20} />
                       <span>Download JSON Backup</span>
                     </button>
-                    <button className="flex-1 bg-gray-800 hover:bg-gray-700 text-gray-400 font-bold py-4 rounded-2xl transition-all flex items-center justify-center space-x-2 border border-gray-700 cursor-not-allowed opacity-50">
+                    <label className="flex-1 bg-gray-800 hover:bg-gray-700 text-white font-bold py-4 rounded-2xl transition-all flex items-center justify-center space-x-2 border border-gray-700 cursor-pointer">
                       <Plus size={20} />
-                      <span>Connect Google Drive (Coming Soon)</span>
+                      <span>Restore from Backup</span>
+                      <input type="file" accept=".json" onChange={handleImportData} className="hidden" />
+                    </label>
+                  </div>
+                  <div className="pt-2">
+                    <button className="w-full bg-blue-600/10 hover:bg-blue-600/20 text-blue-400 font-bold py-4 rounded-2xl transition-all flex items-center justify-center space-x-2 border border-blue-600/20">
+                      <Shield size={20} />
+                      <span>Google Drive Sync (Setup Required)</span>
                     </button>
+                    <p className="text-[10px] text-gray-600 mt-2 text-center italic">Google Drive sync ke liye Google Cloud setup aur API key zaroori hai. Integration manual taur par active ki ja sakti hai.</p>
                   </div>
                 </div>
 
