@@ -175,7 +175,7 @@ const Billing = () => {
             </button>
           </div>
 
-          <div className="bg-white text-black p-10 rounded-2xl shadow-2xl print:m-0 print:shadow-none min-h-[800px]">
+          <div className="bg-white text-black p-4 md:p-10 rounded-2xl shadow-2xl print:m-0 print:shadow-none min-h-[800px] overflow-hidden">
             <div className="flex justify-between items-start border-b-2 border-gray-100 pb-8 mb-8">
               <div>
                 <h2 className="text-3xl font-black uppercase tracking-tighter text-blue-600">Machine Performance Report</h2>
@@ -188,36 +188,38 @@ const Billing = () => {
               </div>
             </div>
 
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="border-b-2 border-gray-900 text-xs font-black uppercase">
-                  <th className="py-4 px-2">Machine Name</th>
-                  <th className="py-4 px-2">Shift</th>
-                  <th className="py-4 px-2 text-right">Total Stitches</th>
-                  <th className="py-4 px-2 text-right">Downtime (Min)</th>
-                  <th className="py-4 px-2 text-right">Logs</th>
-                  <th className="py-4 px-2 text-right">Avg Stitches/Log</th>
-                </tr>
-              </thead>
-              <tbody className="text-sm">
-                {reportData.length > 0 ? (
-                  reportData.map((m, idx) => (
-                    <tr key={idx} className="border-b border-gray-100">
-                      <td className="py-4 px-2 font-bold">{m.machine_name}</td>
-                      <td className="py-4 px-2">{m.shift || 'N/A'}</td>
-                      <td className="py-4 px-2 text-right font-bold text-blue-600">{parseInt(m.total_stitches || 0).toLocaleString()}</td>
-                      <td className="py-4 px-2 text-right text-red-500">{m.total_downtime || 0} min</td>
-                      <td className="py-4 px-2 text-right">{m.log_entries}</td>
-                      <td className="py-4 px-2 text-right font-black">
-                        {m.log_entries > 0 ? Math.round(m.total_stitches / m.log_entries).toLocaleString() : 0}
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr><td colSpan="6" className="py-20 text-center text-gray-400 italic">No machine records found for this period.</td></tr>
-                )}
-              </tbody>
-            </table>
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse min-w-[600px]">
+                <thead>
+                  <tr className="border-b-2 border-gray-900 text-xs font-black uppercase">
+                    <th className="py-4 px-2">Machine Name</th>
+                    <th className="py-4 px-2">Shift</th>
+                    <th className="py-4 px-2 text-right">Total Stitches</th>
+                    <th className="py-4 px-2 text-right">Downtime (Min)</th>
+                    <th className="py-4 px-2 text-right">Logs</th>
+                    <th className="py-4 px-2 text-right">Avg Stitches/Log</th>
+                  </tr>
+                </thead>
+                <tbody className="text-sm">
+                  {reportData.length > 0 ? (
+                    reportData.map((m, idx) => (
+                      <tr key={idx} className="border-b border-gray-100">
+                        <td className="py-4 px-2 font-bold">{m.machine_name}</td>
+                        <td className="py-4 px-2">{m.shift || 'N/A'}</td>
+                        <td className="py-4 px-2 text-right font-bold text-blue-600">{parseInt(m.total_stitches || 0).toLocaleString()}</td>
+                        <td className="py-4 px-2 text-right text-red-500">{m.total_downtime || 0} min</td>
+                        <td className="py-4 px-2 text-right">{m.log_entries}</td>
+                        <td className="py-4 px-2 text-right font-black">
+                          {m.log_entries > 0 ? Math.round(m.total_stitches / m.log_entries).toLocaleString() : 0}
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr><td colSpan="6" className="py-20 text-center text-gray-400 italic">No machine records found for this period.</td></tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
 
             <div className="mt-12 p-6 bg-blue-50 rounded-2xl border border-blue-100">
               <p className="text-xs text-blue-800 font-bold uppercase mb-2">Efficiency Insight</p>
@@ -248,7 +250,7 @@ const Billing = () => {
             <button onClick={generateClientReport} className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-xl font-bold transition-all shadow-lg shadow-blue-600/20">Generate Report</button>
           </div>
 
-          <div className="bg-white text-black p-10 rounded-2xl shadow-2xl print:m-0 print:shadow-none min-h-[800px]">
+          <div className="bg-white text-black p-4 md:p-10 rounded-2xl shadow-2xl print:m-0 print:shadow-none min-h-[800px] overflow-hidden">
             <div className="flex justify-between items-start border-b-2 border-gray-100 pb-8 mb-8">
               <div>
                 <h2 className="text-3xl font-black uppercase tracking-tighter text-blue-600">Client Ledger Report</h2>
@@ -262,40 +264,42 @@ const Billing = () => {
               </div>
             </div>
 
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="border-b-2 border-gray-900 text-xs font-black uppercase">
-                  <th className="py-4 px-2">Date</th>
-                  <th className="py-4 px-2">Description</th>
-                  <th className="py-4 px-2 text-right">Debit (+)</th>
-                  <th className="py-4 px-2 text-right">Credit (-)</th>
-                  <th className="py-4 px-2 text-right">Balance</th>
-                </tr>
-              </thead>
-              <tbody className="text-sm">
-                {reportData.length > 0 ? (
-                  reportData.reduce((acc, t, idx) => {
-                    const prevBalance = idx === 0 ? 0 : acc[idx-1].runningBalance;
-                    const credit = parseFloat(t.credit || 0);
-                    const debit = parseFloat(t.debit || 0);
-                    // Balance = Bills (Debit) - Payments (Credit)
-                    const currentBalance = prevBalance + (debit - credit);
-                    acc.push({ ...t, runningBalance: currentBalance });
-                    return acc;
-                  }, []).map((t) => (
-                    <tr key={t.id} className="border-b border-gray-100">
-                      <td className="py-4 px-2">{new Date(t.transaction_date).toLocaleDateString()}</td>
-                      <td className="py-4 px-2 font-medium">{t.description || 'Transaction'}</td>
-                      <td className="py-4 px-2 text-right text-red-600 font-bold">{parseFloat(t.debit || 0) > 0 ? `₨ ${parseFloat(t.debit).toLocaleString()}` : '-'}</td>
-                      <td className="py-4 px-2 text-right text-green-600 font-bold">{parseFloat(t.credit || 0) > 0 ? `₨ ${parseFloat(t.credit).toLocaleString()}` : '-'}</td>
-                      <td className="py-4 px-2 text-right font-black text-blue-600">₨ {t.runningBalance.toLocaleString()}</td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr><td colSpan="5" className="py-20 text-center text-gray-400 italic">No transactions found for this period. Pehlay client select karain aur "Generate Report" click karain.</td></tr>
-                )}
-              </tbody>
-            </table>
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse min-w-[600px]">
+                <thead>
+                  <tr className="border-b-2 border-gray-900 text-xs font-black uppercase">
+                    <th className="py-4 px-2">Date</th>
+                    <th className="py-4 px-2">Description</th>
+                    <th className="py-4 px-2 text-right">Debit (+)</th>
+                    <th className="py-4 px-2 text-right">Credit (-)</th>
+                    <th className="py-4 px-2 text-right">Balance</th>
+                  </tr>
+                </thead>
+                <tbody className="text-sm">
+                  {reportData.length > 0 ? (
+                    reportData.reduce((acc, t, idx) => {
+                      const prevBalance = idx === 0 ? 0 : acc[idx-1].runningBalance;
+                      const credit = parseFloat(t.credit || 0);
+                      const debit = parseFloat(t.debit || 0);
+                      // Balance = Bills (Debit) - Payments (Credit)
+                      const currentBalance = prevBalance + (debit - credit);
+                      acc.push({ ...t, runningBalance: currentBalance });
+                      return acc;
+                    }, []).map((t) => (
+                      <tr key={t.id} className="border-b border-gray-100">
+                        <td className="py-4 px-2">{new Date(t.transaction_date).toLocaleDateString()}</td>
+                        <td className="py-4 px-2 font-medium">{t.description || 'Transaction'}</td>
+                        <td className="py-4 px-2 text-right text-red-600 font-bold">{parseFloat(t.debit || 0) > 0 ? `₨ ${parseFloat(t.debit).toLocaleString()}` : '-'}</td>
+                        <td className="py-4 px-2 text-right text-green-600 font-bold">{parseFloat(t.credit || 0) > 0 ? `₨ ${parseFloat(t.credit).toLocaleString()}` : '-'}</td>
+                        <td className="py-4 px-2 text-right font-black text-blue-600">₨ {t.runningBalance.toLocaleString()}</td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr><td colSpan="5" className="py-20 text-center text-gray-400 italic">No transactions found for this period. Pehlay client select karain aur "Generate Report" click karain.</td></tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
             
             {reportData.length > 0 && (
               <div className="mt-8 flex justify-end">
@@ -324,7 +328,7 @@ const Billing = () => {
             <button onClick={generateFactoryReport} className="bg-purple-600 hover:bg-purple-700 text-white px-8 py-3 rounded-xl font-bold transition-all shadow-lg shadow-purple-600/20">Generate Factory Report</button>
           </div>
 
-          <div className="bg-white text-black p-10 rounded-2xl shadow-2xl print:m-0 print:shadow-none min-h-[800px]">
+          <div className="bg-white text-black p-4 md:p-10 rounded-2xl shadow-2xl print:m-0 print:shadow-none min-h-[800px] overflow-hidden">
             <div className="flex justify-between items-start border-b-2 border-gray-100 pb-8 mb-8">
               <div>
                 <h2 className="text-3xl font-black uppercase tracking-tighter text-purple-600">Factory Financial Statement</h2>
@@ -337,10 +341,10 @@ const Billing = () => {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-10">
-              <div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+              <div className="overflow-x-auto">
                 <h3 className="bg-green-100 text-green-800 px-4 py-2 rounded-lg font-black uppercase text-xs mb-4">Incomes (Client Payments)</h3>
-                <table className="w-full text-xs">
+                <table className="w-full text-xs min-w-[300px]">
                    <thead className="border-b border-gray-900 font-bold">
                      <tr><th className="py-2 text-left">Date</th><th className="text-left">Ref</th><th className="text-right">Amount</th></tr>
                    </thead>
@@ -356,9 +360,9 @@ const Billing = () => {
                    </tbody>
                 </table>
               </div>
-              <div>
+              <div className="overflow-x-auto">
                 <h3 className="bg-red-100 text-red-800 px-4 py-2 rounded-lg font-black uppercase text-xs mb-4">Expenses (Worker Payments)</h3>
-                <table className="w-full text-xs">
+                <table className="w-full text-xs min-w-[300px]">
                    <thead className="border-b border-gray-900 font-bold">
                      <tr><th className="py-2 text-left">Date</th><th className="text-left">Ref</th><th className="text-right">Amount</th></tr>
                    </thead>
@@ -377,7 +381,7 @@ const Billing = () => {
             </div>
 
             <div className="mt-12 border-t-2 border-gray-900 pt-8">
-               <div className="grid grid-cols-3 gap-6">
+               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                  <div className="bg-gray-50 p-6 rounded-2xl text-center">
                    <p className="text-xs text-gray-500 font-bold uppercase mb-1">Total Cash In</p>
                    <p className="text-2xl font-black text-green-600">₨ {factoryReport.income.reduce((acc, t) => acc + parseFloat(t.credit || 0), 0).toLocaleString()}</p>
