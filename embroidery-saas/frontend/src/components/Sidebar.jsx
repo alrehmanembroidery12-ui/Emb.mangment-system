@@ -10,14 +10,15 @@ import {
   PlusCircle,
   Cpu,
   Sun,
-  Moon
+  Moon,
+  X
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 
 import logo from '../assets/branding/logo.png';
 
-const Sidebar = () => {
+const Sidebar = ({ isOpen, onClose }) => {
   const location = useLocation();
   const { user } = useAuth();
   const { isDarkMode, toggleTheme } = useTheme();
@@ -42,55 +43,74 @@ const Sidebar = () => {
   });
 
   return (
-    <div className="w-60 bg-[var(--bg-sidebar)] border-r border-[var(--border-color)] h-full flex flex-col relative flex-shrink-0 transition-colors duration-300">
-      <div className="p-6 pb-4">
-        <div className="flex items-center space-x-3 mb-6">
-          <div className="w-8 h-8 bg-white rounded-lg p-1 shadow-md overflow-hidden flex items-center justify-center">
-            <img src={logo} alt="Core Logic" className="w-full h-full object-contain" />
-          </div>
-          <div>
-            <h2 className="text-lg font-bold text-[var(--text-main)] tracking-tight leading-none">
-              Core Logic
-            </h2>
-            <p className="text-[8px] font-bold text-purple-500 uppercase tracking-widest mt-1">SaaS Solutions</p>
-          </div>
-        </div>
-        
-        <button 
-          onClick={toggleTheme}
-          className="w-full flex items-center justify-between p-2.5 rounded-xl bg-[var(--bg-input)] text-[var(--text-main)] hover:bg-[var(--border-color)] transition-all border border-[var(--border-color)]"
-        >
-          <span className="text-[9px] font-bold uppercase tracking-widest px-2 opacity-70">Theme</span>
-          {isDarkMode ? <Sun size={16} className="text-yellow-500" /> : <Moon size={16} className="text-purple-500" />}
-        </button>
-      </div>
+    <>
+      {/* Mobile Overlay */}
+      {isOpen && (
+        <div 
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 lg:hidden"
+          onClick={onClose}
+        />
+      )}
 
-      <nav className="flex-1 px-4 space-y-1 mt-4">
-        {filteredItems.map((item) => (
-          <Link
-            key={item.name}
-            to={item.path}
-            className={`flex items-center space-x-3 p-3 rounded-xl transition-all font-semibold text-[10px] uppercase tracking-widest ${
-              location.pathname === item.path 
-                ? 'bg-grad-1 text-white shadow-lg shadow-purple-600/20' 
-                : 'text-[var(--text-muted)] hover:bg-[var(--bg-input)] hover:text-[var(--text-main)] border border-transparent'
-            }`}
+      <div className={`
+        fixed inset-y-0 left-0 z-50 w-60 bg-[var(--bg-sidebar)] border-r border-[var(--border-color)] flex flex-col transition-transform duration-300 lg:translate-x-0 lg:static lg:inset-auto
+        ${isOpen ? 'translate-x-0' : '-translate-x-full'}
+      `}>
+        <div className="p-6 pb-4">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center space-x-3">
+              <div className="w-8 h-8 bg-white rounded-lg p-1 shadow-md overflow-hidden flex items-center justify-center">
+                <img src={logo} alt="Core Logic" className="w-full h-full object-contain" />
+              </div>
+              <div>
+                <h2 className="text-lg font-bold text-[var(--text-main)] tracking-tight leading-none">
+                  Core Logic
+                </h2>
+                <p className="text-[8px] font-bold text-purple-500 uppercase tracking-widest mt-1">SaaS Solutions</p>
+              </div>
+            </div>
+            <button onClick={onClose} className="lg:hidden text-[var(--text-muted)] p-1">
+              <X size={20} />
+            </button>
+          </div>
+          
+          <button 
+            onClick={toggleTheme}
+            className="w-full flex items-center justify-between p-2.5 rounded-xl bg-[var(--bg-input)] text-[var(--text-main)] hover:bg-[var(--border-color)] transition-all border border-[var(--border-color)]"
           >
-            <span className={location.pathname === item.path ? 'text-white' : 'text-purple-500'}>{item.icon}</span>
-            <span>{item.name}</span>
-          </Link>
-        ))}
-      </nav>
+            <span className="text-[9px] font-bold uppercase tracking-widest px-2 opacity-70">Theme</span>
+            {isDarkMode ? <Sun size={16} className="text-yellow-500" /> : <Moon size={16} className="text-purple-500" />}
+          </button>
+        </div>
 
-      {/* Developer Credit Section - Bottom Left */}
-      <div className="p-4 mt-auto">
-        <div className="p-3 border-t border-[var(--border-color)] group cursor-default">
-          <p className="text-[8px] text-[var(--text-muted)] uppercase font-bold mb-0.5 tracking-widest opacity-60">Developed By</p>
-          <p className="text-[10px] font-bold text-[var(--text-main)] group-hover:text-purple-400 transition-colors">Husnain Raza</p>
-          <p className="text-[7px] text-[var(--text-muted)] mt-0.5 opacity-40">© 2026 Core Logic Inc.</p>
+        <nav className="flex-1 px-4 space-y-1 mt-4">
+          {filteredItems.map((item) => (
+            <Link
+              key={item.name}
+              to={item.path}
+              onClick={() => { if(window.innerWidth < 1024) onClose(); }}
+              className={`flex items-center space-x-3 p-3 rounded-xl transition-all font-semibold text-[10px] uppercase tracking-widest ${
+                location.pathname === item.path 
+                  ? 'bg-grad-1 text-white shadow-lg shadow-purple-600/20' 
+                  : 'text-[var(--text-muted)] hover:bg-[var(--bg-input)] hover:text-[var(--text-main)] border border-transparent'
+              }`}
+            >
+              <span className={location.pathname === item.path ? 'text-white' : 'text-purple-500'}>{item.icon}</span>
+              <span>{item.name}</span>
+            </Link>
+          ))}
+        </nav>
+
+        {/* Developer Credit Section - Bottom Left */}
+        <div className="p-4 mt-auto">
+          <div className="p-3 border-t border-[var(--border-color)] group cursor-default">
+            <p className="text-[8px] text-[var(--text-muted)] uppercase font-bold mb-0.5 tracking-widest opacity-60">Developed By</p>
+            <p className="text-[10px] font-bold text-[var(--text-main)] group-hover:text-purple-400 transition-colors">Husnain Raza</p>
+            <p className="text-[7px] text-[var(--text-muted)] mt-0.5 opacity-40">© 2026 Core Logic Inc.</p>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
