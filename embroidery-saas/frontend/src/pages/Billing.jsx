@@ -82,53 +82,57 @@ const Billing = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8 animate-in fade-in duration-700">
       {/* Sidebar / Tabs */}
-      <div className="flex justify-between items-center no-print">
-        <div className="flex space-x-1 bg-gray-900 p-1 rounded-2xl border border-gray-800">
-          <button onClick={() => setActiveTab('overview')} className={`px-6 py-2.5 rounded-xl font-bold transition-all ${activeTab === 'overview' ? 'bg-blue-600 text-white shadow-lg' : 'text-gray-500 hover:text-white'}`}>Overview</button>
-          <button onClick={() => setActiveTab('client')} className={`px-6 py-2.5 rounded-xl font-bold transition-all ${activeTab === 'client' ? 'bg-blue-600 text-white shadow-lg' : 'text-gray-500 hover:text-white'}`}>Client Ledger</button>
-          <button onClick={() => setActiveTab('factory')} className={`px-6 py-2.5 rounded-xl font-bold transition-all ${activeTab === 'factory' ? 'bg-blue-600 text-white shadow-lg' : 'text-gray-500 hover:text-white'}`}>Factory Report</button>
-          <button onClick={() => setActiveTab('machine')} className={`px-6 py-2.5 rounded-xl font-bold transition-all ${activeTab === 'machine' ? 'bg-blue-600 text-white shadow-lg' : 'text-gray-500 hover:text-white'}`}>Machine Reports</button>
+      <div className="flex justify-between items-center mb-6 no-print">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight text-[var(--text-main)]">Financial Reports</h1>
+          <p className="text-[var(--text-muted)] text-xs mt-1 opacity-70">Track your factory's revenue, expenses, and machine efficiency</p>
         </div>
-        <div className="flex space-x-3">
-          <button onClick={handlePrint} className="bg-gray-800 hover:bg-gray-700 text-white px-5 py-2.5 rounded-xl font-semibold transition-all border border-gray-700 flex items-center space-x-2">
-            <Printer size={18} />
-            <span>Print Report</span>
+        <div className="flex space-x-4 items-center">
+          <div className="flex bg-[var(--bg-card)] p-1.5 rounded-2xl border border-[var(--border-color)] shadow-sm">
+            <button onClick={() => setActiveTab('overview')} className={`px-4 py-2 rounded-xl font-bold text-[10px] uppercase tracking-widest transition-all ${activeTab === 'overview' ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' : 'text-[var(--text-muted)] hover:text-[var(--text-main)]'}`}>Overview</button>
+            <button onClick={() => setActiveTab('client')} className={`px-4 py-2 rounded-xl font-bold text-[10px] uppercase tracking-widest transition-all ${activeTab === 'client' ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' : 'text-[var(--text-muted)] hover:text-[var(--text-main)]'}`}>Ledger</button>
+            <button onClick={() => setActiveTab('factory')} className={`px-4 py-2 rounded-xl font-bold text-[10px] uppercase tracking-widest transition-all ${activeTab === 'factory' ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' : 'text-[var(--text-muted)] hover:text-[var(--text-main)]'}`}>Factory</button>
+            <button onClick={() => setActiveTab('machine')} className={`px-4 py-2 rounded-xl font-bold text-[10px] uppercase tracking-widest transition-all ${activeTab === 'machine' ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' : 'text-[var(--text-muted)] hover:text-[var(--text-main)]'}`}>Machine</button>
+          </div>
+          <button onClick={handlePrint} className="bg-[var(--bg-card)] hover:bg-[var(--bg-input)] text-[var(--text-main)] px-5 py-2.5 rounded-xl font-bold transition-all border border-[var(--border-color)] flex items-center space-x-2 shadow-sm text-[10px] uppercase tracking-widest">
+            <Printer size={16} />
+            <span>Print</span>
           </button>
         </div>
       </div>
 
       {activeTab === 'overview' && (
         <>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 no-print">
-            <div className="bg-gray-900 p-6 rounded-2xl border border-gray-800 relative overflow-hidden group">
-              <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity"><Wallet size={80} /></div>
-              <p className="text-gray-500 text-xs font-bold uppercase mb-1">Total Receivables</p>
-              <p className="text-3xl font-bold text-green-500">₨ {parseFloat(summary.total_receivable).toLocaleString()}</p>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 no-print">
+            <div className="bg-[var(--bg-card)] p-6 rounded-2xl border border-[var(--border-color)] relative overflow-hidden group shadow-[var(--shadow)] card-hover">
+              <div className="absolute -top-4 -right-4 p-8 opacity-5 group-hover:opacity-10 transition-opacity rotate-12"><Wallet size={120} /></div>
+              <p className="text-[var(--text-muted)] text-[9px] font-bold uppercase tracking-widest mb-1">Total Receivables</p>
+              <p className="text-2xl font-bold text-green-500 tracking-tight">₨ {parseFloat(summary.total_receivable).toLocaleString()}</p>
             </div>
-            <div className="bg-gray-900 p-6 rounded-2xl border border-gray-800 relative overflow-hidden group">
-              <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity"><ArrowDownRight size={80} /></div>
-              <p className="text-gray-500 text-xs font-bold uppercase mb-1">Total Payables</p>
-              <p className="text-3xl font-bold text-red-500">₨ {parseFloat(summary.total_payable).toLocaleString()}</p>
+            <div className="bg-[var(--bg-card)] p-6 rounded-2xl border border-[var(--border-color)] relative overflow-hidden group shadow-[var(--shadow)] card-hover">
+              <div className="absolute -top-4 -right-4 p-8 opacity-5 group-hover:opacity-10 transition-opacity rotate-12"><ArrowDownRight size={120} /></div>
+              <p className="text-[var(--text-muted)] text-[9px] font-bold uppercase tracking-widest mb-1">Total Payables</p>
+              <p className="text-2xl font-bold text-red-500 tracking-tight">₨ {parseFloat(summary.total_payable).toLocaleString()}</p>
             </div>
-            <div className="bg-gray-900 p-6 rounded-2xl border border-gray-800 relative overflow-hidden group">
-              <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity"><TrendingUp size={80} /></div>
-              <p className="text-gray-500 text-xs font-bold uppercase mb-1">Total Income</p>
-              <p className="text-3xl font-bold text-blue-400">₨ {parseFloat(summary.monthly_income).toLocaleString()}</p>
+            <div className="bg-[var(--bg-card)] p-6 rounded-2xl border border-[var(--border-color)] relative overflow-hidden group shadow-[var(--shadow)] card-hover">
+              <div className="absolute -top-4 -right-4 p-8 opacity-5 group-hover:opacity-10 transition-opacity rotate-12"><TrendingUp size={120} /></div>
+              <p className="text-[var(--text-muted)] text-[9px] font-bold uppercase tracking-widest mb-1">Total Income</p>
+              <p className="text-2xl font-bold text-blue-500 tracking-tight">₨ {parseFloat(summary.monthly_income).toLocaleString()}</p>
             </div>
-            <div className="bg-gray-900 p-6 rounded-2xl border border-gray-800 relative overflow-hidden group">
-              <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity"><TrendingDown size={80} /></div>
-              <p className="text-gray-500 text-xs font-bold uppercase mb-1">Total Expenses</p>
-              <p className="text-3xl font-bold text-purple-400">₨ {parseFloat(summary.monthly_expense).toLocaleString()}</p>
+            <div className="bg-[var(--bg-card)] p-6 rounded-2xl border border-[var(--border-color)] relative overflow-hidden group shadow-[var(--shadow)] card-hover">
+              <div className="absolute -top-4 -right-4 p-8 opacity-5 group-hover:opacity-10 transition-opacity rotate-12"><TrendingDown size={120} /></div>
+              <p className="text-[var(--text-muted)] text-[9px] font-bold uppercase tracking-widest mb-1">Total Expenses</p>
+              <p className="text-2xl font-bold text-purple-500 tracking-tight">₨ {parseFloat(summary.monthly_expense).toLocaleString()}</p>
             </div>
           </div>
 
-          <div className="bg-gray-900 border border-gray-800 rounded-3xl p-12 text-center space-y-6">
-            <div className="w-24 h-24 bg-gray-800 rounded-full flex items-center justify-center mx-auto text-gray-600"><FileText size={48} /></div>
-            <div>
-              <h3 className="text-2xl font-bold text-white">Select a Report Tab</h3>
-              <p className="text-gray-500 mt-2 max-w-md mx-auto">Detailed ledger reports hasil kernay k liye oper diye gaye "Client Ledger" ya "Factory Report" tabs ka istemal karain.</p>
+          <div className="bg-[var(--bg-card)] border border-[var(--border-color)] rounded-[2.5rem] p-16 text-center space-y-6 shadow-[var(--shadow)]">
+            <div className="w-24 h-24 bg-[var(--bg-input)] rounded-2xl flex items-center justify-center mx-auto text-[var(--text-muted)] rotate-3"><FileText size={48} /></div>
+            <div className="max-w-2xl mx-auto">
+              <h3 className="text-2xl font-bold text-[var(--text-main)] tracking-tight">Select a Report Category</h3>
+              <p className="text-[var(--text-muted)] text-xs mt-3 font-medium leading-relaxed opacity-70">Detailed ledger reports aur financial statements hasil kernay k liye oper diye gaye tabs ka istemal karain. Aap client-wise ya machine-wise performance reports bhi generate kar saktay hain.</p>
             </div>
           </div>
         </>

@@ -19,7 +19,7 @@ const Inventory = () => {
     category: 'Thread',
     quantity: '',
     unit: 'Cones',
-    min_stock_level: 5,
+    min_stock_level: '',
     unit_price: ''
   });
 
@@ -123,50 +123,50 @@ const Inventory = () => {
   );
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
+    <div className="space-y-8 animate-in fade-in duration-700">
+      <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-3xl font-bold text-white">Inventory Control</h1>
-          <p className="text-gray-500 text-sm mt-1">Track Threads, Bobbins, and Spare Parts</p>
+          <h1 className="text-2xl font-bold tracking-tight text-[var(--text-main)]">Inventory Control</h1>
+          <p className="text-[var(--text-muted)] text-xs mt-1 opacity-70">Track Threads, Bobbins, and Spare Parts</p>
         </div>
         <button 
           onClick={() => { setIsEditing(false); setFormData({ item_name: '', item_code: '', category: 'Thread', quantity: '', unit: 'Cones', min_stock_level: 5, unit_price: '' }); setShowModal(true); }}
-          className="bg-purple-600 hover:bg-purple-700 px-6 py-2.5 rounded-xl font-semibold flex items-center space-x-2 transition-all shadow-lg shadow-purple-600/20"
+          className="bg-purple-600 hover:bg-purple-700 text-white px-5 py-2.5 rounded-xl font-bold flex items-center space-x-2 transition-all shadow-lg shadow-purple-600/20 text-[10px] uppercase tracking-widest"
         >
-          <Plus size={18} />
-          <span>Add New Item</span>
+          <Plus size={16} />
+          <span>Add Item</span>
         </button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-gray-900 p-6 rounded-2xl border border-gray-800 flex items-center justify-between">
-          <div><p className="text-gray-500 text-xs font-bold uppercase mb-1">Total Stock Items</p><p className="text-3xl font-bold">{items.length}</p></div>
-          <div className="p-4 bg-blue-600/10 rounded-2xl text-blue-400"><Database size={24} /></div>
+        <div className="bg-[var(--bg-card)] p-6 rounded-2xl border border-[var(--border-color)] flex items-center justify-between shadow-[var(--shadow)] card-hover transition-all">
+          <div><p className="text-[var(--text-muted)] text-[9px] font-bold uppercase tracking-widest mb-1">Total Items</p><p className="text-2xl font-bold tracking-tight text-[var(--text-main)]">{items.length}</p></div>
+          <div className="p-3 bg-blue-600/10 rounded-xl text-blue-500"><Database size={20} /></div>
         </div>
-        <div className="bg-gray-900 p-6 rounded-2xl border border-gray-800 flex items-center justify-between">
-          <div><p className="text-gray-500 text-xs font-bold uppercase mb-1">Low Stock Alerts</p><p className="text-3xl font-bold text-red-500">{items.filter(i => parseFloat(i.quantity) <= parseFloat(i.min_stock_level)).length}</p></div>
-          <div className="p-4 bg-red-600/10 rounded-2xl text-red-500"><AlertTriangle size={24} /></div>
+        <div className="bg-[var(--bg-card)] p-6 rounded-2xl border border-[var(--border-color)] flex items-center justify-between shadow-[var(--shadow)] card-hover transition-all">
+          <div><p className="text-[var(--text-muted)] text-[9px] font-bold uppercase tracking-widest mb-1">Low Stock</p><p className="text-2xl font-bold tracking-tight text-red-500">{items.filter(i => parseFloat(i.quantity) <= parseFloat(i.min_stock_level)).length}</p></div>
+          <div className="p-3 bg-red-600/10 rounded-xl text-red-500"><AlertTriangle size={20} /></div>
         </div>
-        <div className="bg-gray-900 p-6 rounded-2xl border border-gray-800 flex items-center justify-between">
-          <div><p className="text-gray-500 text-xs font-bold uppercase mb-1">Threads (Types)</p><p className="text-3xl font-bold text-purple-400">{items.filter(i => i.category === 'Thread').length}</p></div>
-          <div className="p-4 bg-purple-600/10 rounded-2xl text-purple-400"><Tag size={24} /></div>
+        <div className="bg-[var(--bg-card)] p-6 rounded-2xl border border-[var(--border-color)] flex items-center justify-between shadow-[var(--shadow)] card-hover transition-all">
+          <div><p className="text-[var(--text-muted)] text-[9px] font-bold uppercase tracking-widest mb-1">Dhaga Types</p><p className="text-2xl font-bold tracking-tight text-purple-500">{items.filter(i => i.category === 'Thread').length}</p></div>
+          <div className="p-3 bg-purple-600/10 rounded-xl text-purple-500"><Tag size={20} /></div>
         </div>
       </div>
 
-      <div className="flex gap-4 bg-gray-900/50 p-4 rounded-2xl border border-gray-800">
+      <div className="flex gap-4 bg-[var(--bg-card)] p-5 rounded-3xl border border-[var(--border-color)] shadow-[var(--shadow)]">
         <div className="relative flex-1">
-          <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
-          <input type="text" placeholder="Search by Thread # or Name..." className="w-full bg-gray-800 border border-gray-700 rounded-xl py-2.5 pl-10 pr-10 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+          <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--text-muted)]" />
+          <input type="text" placeholder="Search by Thread # or Name..." className="w-full bg-[var(--bg-input)] border border-[var(--border-color)] rounded-2xl py-3 pl-12 pr-10 text-[var(--text-main)] focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
           {searchTerm && (
             <button 
               onClick={() => setSearchTerm('')}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white"
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-[var(--text-muted)] hover:text-[var(--text-main)]"
             >
               &times;
             </button>
           )}
         </div>
-        <select className="bg-gray-800 border border-gray-700 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)}>
+        <select className="bg-[var(--bg-input)] border border-[var(--border-color)] rounded-2xl px-5 py-3 text-[var(--text-main)] focus:outline-none focus:ring-2 focus:ring-blue-500 font-bold cursor-pointer" value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)}>
           <option value="All">All Categories</option>
           <option value="Thread">Thread (Dhaga)</option>
           <option value="Bobbin">Bobbin</option>
@@ -175,49 +175,49 @@ const Inventory = () => {
         </select>
       </div>
 
-      <div className="bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden shadow-2xl">
-        <table className="w-full text-left">
+      <div className="overflow-x-auto pb-4">
+        <table className="modern-table">
           <thead>
-            <tr className="bg-gray-800/50 text-gray-400 text-xs font-bold uppercase tracking-wider">
+            <tr>
               <th className="px-6 py-4">Item Code / Thread #</th>
-              <th className="px-6 py-4">Item Description</th>
+              <th className="px-6 py-4">Description</th>
               <th className="px-6 py-4">Category</th>
               <th className="px-6 py-4">Unit Price</th>
-              <th className="px-6 py-4">Current Stock</th>
+              <th className="px-6 py-4">Stock Qty</th>
               <th className="px-6 py-4">Status</th>
               <th className="px-6 py-4 text-right">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-800">
+          <tbody>
             {filteredItems.map((item) => {
               const isLow = parseFloat(item.quantity) <= parseFloat(item.min_stock_level);
               return (
-                <tr key={item.id} className="hover:bg-gray-800/30 transition-colors group">
+                <tr key={item.id} className="group">
                   <td className="px-6 py-5">
-                    <p className="text-white font-bold text-lg">{item.item_code || '---'}</p>
-                    <p className="text-gray-500 text-xs uppercase tracking-tighter font-bold">Code / Number</p>
+                    <p className="text-[var(--text-main)] font-bold text-base tracking-tight">{item.item_code || '---'}</p>
+                    <p className="text-[var(--text-muted)] text-[9px] font-bold uppercase tracking-widest mt-0.5">Reference #</p>
                   </td>
                   <td className="px-6 py-5">
-                    <p className="text-gray-300 font-medium">{item.item_name}</p>
+                    <p className="text-[var(--text-main)] font-bold">{item.item_name}</p>
                   </td>
                   <td className="px-6 py-5">
-                    <span className="bg-gray-800 text-gray-300 px-3 py-1 rounded-full text-xs font-bold border border-gray-700">{item.category}</span>
+                    <span className="bg-[var(--bg-input)] text-[var(--text-muted)] px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest border border-[var(--border-color)]">{item.category}</span>
                   </td>
                   <td className="px-6 py-5">
-                    <p className="text-white font-bold">₨ {item.unit_price || 0}</p>
-                    <p className="text-gray-500 text-[10px] uppercase font-bold tracking-tighter">Per {item.unit}</p>
+                    <p className="text-[var(--text-main)] font-black tracking-tighter">₨ {parseFloat(item.unit_price || 0).toLocaleString()}</p>
+                    <p className="text-[var(--text-muted)] text-[10px] font-black uppercase tracking-widest">Per {item.unit}</p>
                   </td>
                   <td className="px-6 py-5">
-                    <p className="text-white font-bold text-lg">{item.quantity} <span className="text-gray-500 text-xs font-normal">{item.unit}</span></p>
+                    <p className="text-[var(--text-main)] font-black text-xl tracking-tighter">{item.quantity} <span className="text-[var(--text-muted)] text-xs font-bold uppercase tracking-normal ml-1">{item.unit}</span></p>
                   </td>
                   <td className="px-6 py-5">
-                    {isLow ? <span className="text-red-500 flex items-center space-x-1"><AlertTriangle size={14} /><span className="text-xs font-bold uppercase">Low Stock</span></span> : <span className="text-green-500 flex items-center space-x-1"><CheckCircle size={14} /><span className="text-xs font-bold uppercase">Healthy</span></span>}
+                    {isLow ? <span className="text-red-500 flex items-center space-x-2"><AlertTriangle size={16} /><span className="text-[10px] font-black uppercase tracking-widest">Low Stock</span></span> : <span className="text-green-500 flex items-center space-x-2"><CheckCircle size={16} /><span className="text-[10px] font-black uppercase tracking-widest">Healthy</span></span>}
                   </td>
                   <td className="px-6 py-5 text-right">
                     <div className="flex justify-end space-x-2">
-                      <button onClick={() => handleEdit(item)} className="p-2 text-gray-400 hover:bg-gray-600/10 rounded-lg" title="Edit Item"><Edit3 size={18} /></button>
-                      <button onClick={() => { setSelectedItem(item); setShowTransactionModal(true); }} className="p-2 text-blue-400 hover:bg-blue-600/10 rounded-lg" title="In/Out Transaction"><Database size={18} /></button>
-                      <button onClick={() => { setSelectedItem(item); fetchHistory(item.id); setShowHistoryModal(true); }} className="p-2 text-yellow-500 hover:bg-yellow-500/10 rounded-lg" title="View History"><History size={18} /></button>
+                      <button onClick={() => handleEdit(item)} className="p-3 text-[var(--text-muted)] hover:text-blue-500 hover:bg-blue-500/10 rounded-xl transition-all border border-transparent hover:border-blue-500/20" title="Edit Item"><Edit3 size={18} /></button>
+                      <button onClick={() => { setSelectedItem(item); setShowTransactionModal(true); }} className="p-3 text-purple-500 hover:bg-purple-500/10 rounded-xl transition-all border border-transparent hover:border-purple-500/20" title="In/Out Transaction"><Database size={18} /></button>
+                      <button onClick={() => { setSelectedItem(item); fetchHistory(item.id); setShowHistoryModal(true); }} className="p-3 text-yellow-500 hover:bg-yellow-500/10 rounded-xl transition-all border border-transparent hover:border-yellow-500/20" title="View History"><History size={18} /></button>
                     </div>
                   </td>
                 </tr>

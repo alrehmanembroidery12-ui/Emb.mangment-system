@@ -138,39 +138,39 @@ const Orders = () => {
   );
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
+    <div className="space-y-8 animate-in fade-in duration-700">
+      <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-3xl font-bold text-white">Order Management</h1>
-          <p className="text-gray-500 text-sm mt-1">Manage production, fabric (gazana), and client ledger</p>
+          <h1 className="text-2xl font-bold tracking-tight text-[var(--text-main)]">Order Management</h1>
+          <p className="text-[var(--text-muted)] text-xs mt-1 opacity-70">Manage production, fabric (gazana), and client ledger</p>
         </div>
         <div className="flex space-x-3">
           <button onClick={() => {
             setClientData({ name: '', shop_name: '', phone: '', address: '' });
             setShowClientModal(true);
-          }} className="bg-gray-800 hover:bg-gray-700 border border-gray-700 px-6 py-2.5 rounded-xl font-semibold flex items-center space-x-2 transition-all"><UserPlus size={18} /><span>Add Client</span></button>
+          }} className="bg-[var(--bg-card)] hover:bg-[var(--bg-input)] border border-[var(--border-color)] text-[var(--text-main)] px-5 py-2.5 rounded-xl font-bold flex items-center space-x-2 transition-all shadow-sm text-[10px] uppercase tracking-widest"><UserPlus size={16} /><span>Add Client</span></button>
           <button onClick={() => {
             setFormData({ client_id: '', order_number: '', total_price: '', advance_paid: '', production_cost: '', fabric_quantity: '', due_date: '' });
             setClientSearchTerm('');
             setShowModal(true);
-          }} className="bg-blue-600 hover:bg-blue-700 px-6 py-2.5 rounded-xl font-semibold flex items-center space-x-2 transition-all shadow-lg shadow-blue-600/20"><Plus size={18} /><span>New Order</span></button>
+          }} className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-bold flex items-center space-x-2 transition-all shadow-lg shadow-blue-600/20 text-[10px] uppercase tracking-widest"><Plus size={16} /><span>New Order</span></button>
         </div>
       </div>
 
-      <div className="flex gap-4 bg-gray-900/50 p-4 rounded-2xl border border-gray-800">
+      <div className="flex gap-4 bg-[var(--bg-card)] p-5 rounded-3xl border border-[var(--border-color)] shadow-[var(--shadow)]">
         <div className="relative flex-1">
-          <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
-          <input type="text" placeholder="Search by Order #, Client, or Shop..." className="w-full bg-gray-800 border border-gray-700 rounded-xl py-2.5 pl-10 pr-10 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+          <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--text-muted)]" />
+          <input type="text" placeholder="Search by Order #, Client, or Shop..." className="w-full bg-[var(--bg-input)] border border-[var(--border-color)] rounded-2xl py-3 pl-12 pr-10 text-[var(--text-main)] focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
           {searchTerm && (
             <button 
               onClick={() => setSearchTerm('')}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white"
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-[var(--text-muted)] hover:text-[var(--text-main)]"
             >
               &times;
             </button>
           )}
         </div>
-        <select className="bg-gray-800 border border-gray-700 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
+        <select className="bg-[var(--bg-input)] border border-[var(--border-color)] rounded-2xl px-5 py-3 text-[var(--text-main)] focus:outline-none focus:ring-2 focus:ring-blue-500 font-bold cursor-pointer" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
           <option value="All">All Status</option>
           <option value="Pending">Pending</option>
           <option value="In-Production">In Production</option>
@@ -179,45 +179,52 @@ const Orders = () => {
         </select>
       </div>
 
-      <div className="bg-gray-900 border border-gray-800 rounded-2xl overflow-x-auto shadow-2xl">
-        <table className="w-full text-left">
+      <div className="overflow-x-auto pb-4">
+        <table className="modern-table">
           <thead>
-            <tr className="bg-gray-800/50 text-gray-400 text-xs font-bold uppercase tracking-wider">
+            <tr>
               <th className="px-6 py-4">Order & Gazana</th>
               <th className="px-6 py-4">Client & Shop</th>
               <th className="px-6 py-4">Status</th>
               <th className="px-6 py-4">Bill Details</th>
-              <th className="px-6 py-4">Client Balance</th>
+              <th className="px-6 py-4">Balance</th>
               <th className="px-6 py-4 text-right">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-800">
+          <tbody>
             {filteredOrders.map((order) => {
               const client = clients.find(c => c.id === order.client_id);
               return (
-                <tr key={order.id} className="hover:bg-gray-800/30 transition-colors group">
+                <tr key={order.id} className="group">
                   <td className="px-6 py-5">
-                    <p className="text-white font-bold">{order.order_number}</p>
-                    <div className="flex items-center space-x-1.5 text-gray-500 text-xs mt-1"><BookOpen size={12} /><span>{order.fabric_quantity} Gaz</span></div>
+                    <p className="text-[var(--text-main)] font-bold text-base tracking-tight">{order.order_number}</p>
+                    <div className="flex items-center space-x-1.5 text-[var(--text-muted)] text-[9px] font-bold uppercase tracking-widest mt-1"><BookOpen size={12} className="text-blue-500" /><span>{order.fabric_quantity} Gaz</span></div>
                   </td>
                   <td className="px-6 py-5">
                     <div className="flex flex-col">
-                      <p className="text-gray-300 font-bold">{order.client_name || 'Walking Customer'}</p>
-                      <div className="flex items-center space-x-1.5 text-gray-500 text-xs mt-0.5"><Store size={12} /><span>{order.shop_name || 'No Shop'}</span></div>
-                      <div className="flex items-center space-x-1.5 text-gray-500 text-xs"><Phone size={12} /><span>{order.phone || 'No Phone'}</span></div>
+                      <p className="text-[var(--text-main)] font-black tracking-tight">{order.client_name || 'Walking Customer'}</p>
+                      <div className="flex items-center space-x-1.5 text-[var(--text-muted)] text-[10px] font-bold uppercase tracking-widest mt-0.5"><Store size={12} /><span>{order.shop_name || 'No Shop'}</span></div>
+                      <div className="flex items-center space-x-1.5 text-[var(--text-muted)] text-[10px] font-bold tracking-widest"><Phone size={12} /><span>{order.phone || 'No Phone'}</span></div>
                     </div>
                   </td>
-                  <td className="px-6 py-5"><span className={`px-3 py-1 rounded-full text-xs font-bold ${getStatusColor(order.status)}`}>{order.status}</span></td>
-                  <td className="px-6 py-5"><p className="text-white font-bold">₨ {order.total_price}</p><p className="text-green-500 text-xs">Adv: ₨ {order.advance_paid}</p></td>
                   <td className="px-6 py-5">
-                    <p className={`text-lg font-bold ${parseFloat(client?.balance) > 0 ? 'text-red-500' : 'text-green-500'}`}>₨ {client?.balance || 0}</p>
-                    <p className="text-gray-500 text-[10px] uppercase font-bold tracking-tighter">Total Pending</p>
+                    <span className={`px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider border ${getStatusColor(order.status).replace('/10', '/20').replace('bg-', 'bg-').replace('text-', 'text-')}`}>
+                      {order.status}
+                    </span>
+                  </td>
+                  <td className="px-6 py-5">
+                    <p className="text-[var(--text-main)] font-bold text-base tracking-tight">₨ {parseFloat(order.total_price).toLocaleString()}</p>
+                    <p className="text-green-500 text-[9px] font-bold uppercase tracking-widest">Adv: ₨ {parseFloat(order.advance_paid).toLocaleString()}</p>
+                  </td>
+                  <td className="px-6 py-5">
+                    <p className={`text-base font-bold tracking-tight ${parseFloat(client?.balance) > 0 ? 'text-red-500' : 'text-green-500'}`}>₨ {parseFloat(client?.balance || 0).toLocaleString()}</p>
+                    <p className="text-[var(--text-muted)] text-[9px] font-bold uppercase tracking-widest">Client Balance</p>
                   </td>
                   <td className="px-6 py-5 text-right">
-                    <div className="flex justify-end space-x-1">
-                      <button onClick={() => { setSelectedClient(client); setShowPaymentModal(true); }} className="p-2 text-green-500 hover:bg-green-500/10 rounded-lg" title="Add Payment"><Wallet size={16} /></button>
-                      <button onClick={() => { setSelectedClient(client); fetchClientTransactions(client.id); setShowLedgerModal(true); }} className="p-2 text-yellow-500 hover:bg-yellow-500/10 rounded-lg" title="View Ledger"><Receipt size={16} /></button>
-                      <button onClick={() => { setSelectedOrder(order); setShowOrderDetailsModal(true); }} className="p-2 text-blue-400 hover:bg-blue-600/10 rounded-lg" title="View Order"><Eye size={16} /></button>
+                    <div className="flex justify-end space-x-2">
+                      <button onClick={() => { setSelectedClient(client); setShowPaymentModal(true); }} className="p-3 text-green-500 hover:bg-green-500/10 rounded-xl transition-all border border-transparent hover:border-green-500/20" title="Add Payment"><Wallet size={18} /></button>
+                      <button onClick={() => { setSelectedClient(client); fetchClientTransactions(client.id); setShowLedgerModal(true); }} className="p-3 text-yellow-500 hover:bg-yellow-500/10 rounded-xl transition-all border border-transparent hover:border-yellow-500/20" title="View Ledger"><Receipt size={18} /></button>
+                      <button onClick={() => { setSelectedOrder(order); setShowOrderDetailsModal(true); }} className="p-3 text-blue-500 hover:bg-blue-500/10 rounded-xl transition-all border border-transparent hover:border-blue-500/20" title="View Order"><Eye size={18} /></button>
                     </div>
                   </td>
                 </tr>

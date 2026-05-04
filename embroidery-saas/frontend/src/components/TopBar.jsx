@@ -19,59 +19,55 @@ const TopBar = () => {
   };
 
   return (
-    <div className="h-16 bg-[var(--bg-sidebar)]/80 backdrop-blur-md border-b border-[var(--border-color)] flex items-center justify-between px-8 sticky top-0 z-40 transition-colors duration-300">
+    <div className="h-20 bg-[var(--bg-main)]/50 backdrop-blur-xl border-b border-[var(--border-color)] flex items-center justify-between px-8 sticky top-0 z-40 transition-colors duration-300">
       {/* Global Search Bar */}
-      <div className="relative w-96">
-        <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-          <Search size={18} className="text-[var(--text-muted)]" />
+      <div className="relative w-96 group">
+        <span className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+          <Search size={18} className="text-[var(--text-muted)] group-focus-within:text-purple-500 transition-colors" />
         </span>
         <input
           type="text"
-          className="block w-full pl-10 pr-3 py-2 border border-[var(--border-color)] rounded-xl bg-[var(--bg-input)] text-[var(--text-main)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all sm:text-sm"
-          placeholder="Search for orders, workers, or invoices..."
+          className="block w-full pl-12 pr-4 py-3 border border-[var(--border-color)] rounded-2xl bg-[var(--bg-input)] text-[var(--text-main)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 transition-all sm:text-sm"
+          placeholder="Search everything..."
         />
       </div>
 
       {/* Notifications and Profile */}
       <div className="flex items-center space-x-6">
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-3">
            {user?.is_demo && (
-             <span className="flex items-center px-3 py-1 rounded-full bg-amber-500/20 text-amber-500 border border-amber-500/50 text-xs font-bold animate-pulse">
-               <AlertCircle size={14} className="mr-1" />
-               DEMO ACCOUNT
+             <span className="flex items-center px-4 py-1.5 rounded-full bg-amber-500/10 text-amber-500 border border-amber-500/20 text-[10px] font-black tracking-widest animate-pulse">
+               <AlertCircle size={14} className="mr-2" />
+               DEMO MODE
              </span>
            )}
            <button 
              onClick={handleResetDemo}
-             className="flex items-center px-3 py-1 rounded-lg bg-[var(--bg-input)] hover:bg-[var(--border-color)] text-[var(--text-muted)] hover:text-[var(--text-main)] border border-[var(--border-color)] transition-all text-xs font-bold"
+             className="flex items-center px-4 py-1.5 rounded-xl bg-[var(--bg-input)] hover:bg-purple-500/10 text-[var(--text-muted)] hover:text-purple-500 border border-[var(--border-color)] hover:border-purple-500/30 transition-all text-[10px] font-black uppercase tracking-widest"
              title="Reset Data"
            >
-             <RefreshCcw size={14} className="mr-1" />
-             Reset Data
+             <RefreshCcw size={14} className="mr-2" />
+             Reset
            </button>
         </div>
 
-        <button className="relative text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors">
+        <div className="h-8 w-[1px] bg-[var(--border-color)]"></div>
+
+        <button className="relative text-[var(--text-muted)] hover:text-purple-500 transition-colors p-2 bg-[var(--bg-input)] rounded-xl border border-[var(--border-color)]">
           <Bell size={20} />
-          <span className="absolute top-0 right-0 block h-2 w-2 rounded-full bg-red-500 ring-2 ring-[var(--bg-sidebar)]"></span>
+          <span className="absolute top-2 right-2 block h-2 w-2 rounded-full bg-red-500 ring-2 ring-[var(--bg-main)]"></span>
         </button>
         
-        <div className="flex items-center space-x-3 border-l border-[var(--border-color)] pl-6">
-          <div className="text-right">
-            <p className="text-sm font-bold text-[var(--text-main)]">{user?.full_name}</p>
-            <p className="text-xs text-[var(--text-muted)] capitalize font-medium">{user?.role}</p>
+        <div className="flex items-center space-x-4 bg-[var(--bg-input)] p-1.5 pr-4 rounded-2xl border border-[var(--border-color)] hover:border-purple-500/30 transition-all group">
+          <div className="bg-grad-1 p-0.5 rounded-xl shadow-lg shadow-purple-600/20">
+            <div className="bg-[var(--bg-main)] rounded-[10px] p-1">
+              <UserCircle size={24} className="text-purple-500" />
+            </div>
           </div>
-          <div className="bg-gradient-to-br from-blue-500 to-purple-600 p-0.5 rounded-full">
-            <UserCircle size={32} className="text-[var(--bg-sidebar)] bg-[var(--text-main)] rounded-full" />
+          <div className="text-left">
+            <p className="text-xs font-black text-[var(--text-main)] leading-none">{user?.full_name}</p>
+            <p className="text-[10px] text-[var(--text-muted)] capitalize font-bold mt-1 tracking-wider">{user?.role}</p>
           </div>
-          
-          <button 
-            onClick={logout}
-            className="text-[var(--text-muted)] hover:text-red-500 transition-colors p-1"
-            title="Logout"
-          >
-            <LogOut size={20} />
-          </button>
         </div>
       </div>
     </div>

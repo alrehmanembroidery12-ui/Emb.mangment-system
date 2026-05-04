@@ -15,6 +15,8 @@ import {
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 
+import logo from '../assets/branding/logo.png';
+
 const Sidebar = () => {
   const location = useLocation();
   const { user } = useAuth();
@@ -40,47 +42,53 @@ const Sidebar = () => {
   });
 
   return (
-    <div className="w-64 bg-[var(--bg-sidebar)] border-r border-[var(--border-color)] h-screen flex flex-col relative flex-shrink-0 transition-colors duration-300">
-      <div className="p-6 flex justify-between items-center">
-        <h2 className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-600 tracking-tighter">
-          ACRU
-        </h2>
+    <div className="w-60 bg-[var(--bg-sidebar)] border-r border-[var(--border-color)] h-full flex flex-col relative flex-shrink-0 transition-colors duration-300">
+      <div className="p-6 pb-4">
+        <div className="flex items-center space-x-3 mb-6">
+          <div className="w-8 h-8 bg-white rounded-lg p-1 shadow-md overflow-hidden flex items-center justify-center">
+            <img src={logo} alt="Core Logic" className="w-full h-full object-contain" />
+          </div>
+          <div>
+            <h2 className="text-lg font-bold text-[var(--text-main)] tracking-tight leading-none">
+              Core Logic
+            </h2>
+            <p className="text-[8px] font-bold text-purple-500 uppercase tracking-widest mt-1">SaaS Solutions</p>
+          </div>
+        </div>
+        
         <button 
           onClick={toggleTheme}
-          className="p-2 rounded-xl bg-[var(--bg-input)] text-[var(--text-main)] hover:bg-[var(--border-color)] transition-all shadow-sm"
-          title={isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+          className="w-full flex items-center justify-between p-2.5 rounded-xl bg-[var(--bg-input)] text-[var(--text-main)] hover:bg-[var(--border-color)] transition-all border border-[var(--border-color)]"
         >
-          {isDarkMode ? <Sun size={18} className="text-yellow-500" /> : <Moon size={18} className="text-blue-600" />}
+          <span className="text-[9px] font-bold uppercase tracking-widest px-2 opacity-70">Theme</span>
+          {isDarkMode ? <Sun size={16} className="text-yellow-500" /> : <Moon size={16} className="text-purple-500" />}
         </button>
       </div>
 
-      <nav className="flex-1 px-4 space-y-2 mt-4">
+      <nav className="flex-1 px-4 space-y-1 mt-4">
         {filteredItems.map((item) => (
           <Link
             key={item.name}
             to={item.path}
-            className={`flex items-center space-x-3 p-3 rounded-xl transition-all ${
+            className={`flex items-center space-x-3 p-3 rounded-xl transition-all font-semibold text-[10px] uppercase tracking-widest ${
               location.pathname === item.path 
-                ? 'bg-blue-600/10 text-[var(--accent-color)] border border-blue-600/20' 
-                : 'text-[var(--text-muted)] hover:bg-[var(--bg-input)] hover:text-[var(--text-main)]'
+                ? 'bg-grad-1 text-white shadow-lg shadow-purple-600/20' 
+                : 'text-[var(--text-muted)] hover:bg-[var(--bg-input)] hover:text-[var(--text-main)] border border-transparent'
             }`}
           >
-            {item.icon}
-            <span className="font-bold">{item.name}</span>
+            <span className={location.pathname === item.path ? 'text-white' : 'text-purple-500'}>{item.icon}</span>
+            <span>{item.name}</span>
           </Link>
         ))}
       </nav>
 
-      {/* Quick Action Section */}
-      <div className="p-4 bg-[var(--bg-input)] m-4 rounded-2xl border border-[var(--border-color)] shadow-sm">
-        <p className="text-[10px] text-[var(--text-muted)] uppercase font-black mb-3 px-2 tracking-widest">Quick Action</p>
-        <button 
-          onClick={() => window.location.href = '/orders'}
-          className="w-full flex items-center justify-center space-x-2 bg-gradient-to-r from-blue-600 to-purple-600 p-3 rounded-xl font-bold text-white hover:opacity-90 transition-opacity shadow-lg shadow-blue-600/20"
-        >
-          <PlusCircle size={18} />
-          <span>New Order</span>
-        </button>
+      {/* Developer Credit Section - Bottom Left */}
+      <div className="p-4 mt-auto">
+        <div className="p-3 border-t border-[var(--border-color)] group cursor-default">
+          <p className="text-[8px] text-[var(--text-muted)] uppercase font-bold mb-0.5 tracking-widest opacity-60">Developed By</p>
+          <p className="text-[10px] font-bold text-[var(--text-main)] group-hover:text-purple-400 transition-colors">Husnain Raza</p>
+          <p className="text-[7px] text-[var(--text-muted)] mt-0.5 opacity-40">© 2026 Core Logic Inc.</p>
+        </div>
       </div>
     </div>
   );

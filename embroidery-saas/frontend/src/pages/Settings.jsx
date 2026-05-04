@@ -24,7 +24,7 @@ import {
 const Settings = () => {
   const [activeTab, setActiveTab] = useState('profile');
   const [profile, setProfile] = useState({ name: '', address: '', phone: '', subscription_plan: '', subscription_status: '', trial_ends_at: '' });
-  const [bonusRules, setBonusRules] = useState({ min_stitches: 0, bonus_amount: 0 });
+  const [bonusRules, setBonusRules] = useState({ min_stitches: '', bonus_amount: '' });
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
@@ -153,11 +153,11 @@ const Settings = () => {
   ];
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-end">
+    <div className="space-y-8 animate-in fade-in duration-700">
+      <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-3xl font-bold text-white tracking-tight">Settings</h1>
-          <p className="text-gray-500 text-sm mt-1">Manage your factory profile, team, and system preferences</p>
+          <h1 className="text-2xl font-bold tracking-tight text-[var(--text-main)]">System Settings</h1>
+          <p className="text-[var(--text-muted)] text-xs mt-1 opacity-70">Manage your factory profile, team, and system preferences</p>
         </div>
       </div>
 
@@ -168,10 +168,10 @@ const Settings = () => {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl font-bold transition-all ${
+              className={`w-full flex items-center space-x-3 px-5 py-3.5 rounded-xl font-bold text-[10px] uppercase tracking-widest transition-all shadow-sm ${
                 activeTab === tab.id 
                 ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' 
-                : 'text-gray-500 hover:bg-gray-900 hover:text-white border border-transparent'
+                : 'bg-[var(--bg-card)] text-[var(--text-muted)] hover:text-[var(--text-main)] border border-[var(--border-color)]'
               }`}
             >
               {tab.icon}
@@ -181,67 +181,67 @@ const Settings = () => {
         </div>
 
         {/* Content Area */}
-        <div className="flex-1 bg-gray-900 border border-gray-800 rounded-3xl overflow-hidden shadow-2xl">
-          <div className="p-8">
+        <div className="flex-1 bg-[var(--bg-card)] border border-[var(--border-color)] rounded-[2.5rem] overflow-hidden shadow-[var(--shadow)]">
+          <div className="p-10">
             {message.text && (
-              <div className={`mb-6 p-4 rounded-xl font-bold text-sm flex items-center space-x-2 ${message.type === 'success' ? 'bg-green-600/10 text-green-400 border border-green-600/20' : 'bg-red-600/10 text-red-400 border border-red-600/20'}`}>
+              <div className={`mb-8 p-5 rounded-2xl font-black text-xs uppercase tracking-widest flex items-center space-x-3 ${message.type === 'success' ? 'bg-green-600/10 text-green-500 border border-green-600/20' : 'bg-red-600/10 text-red-500 border border-red-600/20'}`}>
                 {message.type === 'success' ? <CheckCircle size={18} /> : <Info size={18} />}
                 <span>{message.text}</span>
               </div>
             )}
 
             {activeTab === 'profile' && (
-              <div className="space-y-6 animate-in fade-in duration-500">
-                <div className="border-b border-gray-800 pb-4 mb-6">
-                  <h2 className="text-2xl font-bold text-white">Factory Profile</h2>
-                  <p className="text-gray-500 text-sm">Reports aur invoices par ye maloomat print hon gi</p>
+              <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-500">
+                <div className="border-b border-[var(--border-color)] pb-6 mb-8">
+                  <h2 className="text-3xl font-black text-[var(--text-main)] tracking-tighter">Factory Profile</h2>
+                  <p className="text-[var(--text-muted)] text-sm mt-1 font-medium">Reports aur invoices par ye maloomat print hon gi</p>
                 </div>
 
-                <form onSubmit={handleUpdateProfile} className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                      <label className="text-xs font-bold text-gray-500 uppercase tracking-widest">Factory Name</label>
+                <form onSubmit={handleUpdateProfile} className="space-y-8">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div className="space-y-3">
+                      <label className="text-[10px] font-black text-[var(--text-muted)] uppercase tracking-[0.2em]">Factory Name</label>
                       <div className="relative">
-                        <Building size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
+                        <Building size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--text-muted)]" />
                         <input 
                           type="text" 
-                          className="w-full bg-gray-800 border border-gray-700 rounded-xl py-3 pl-10 pr-3 text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                          className="w-full bg-[var(--bg-input)] border border-[var(--border-color)] rounded-2xl py-4 pl-12 pr-4 text-[var(--text-main)] focus:ring-2 focus:ring-blue-500 outline-none transition-all font-bold"
                           value={profile.name}
                           onChange={(e) => setProfile({...profile, name: e.target.value})}
-                          placeholder="Factory Name"
+                          placeholder="e.g. Al-Rehman Embroidery"
                         />
                       </div>
                     </div>
-                    <div className="space-y-2">
-                      <label className="text-xs font-bold text-gray-500 uppercase tracking-widest">Contact Phone</label>
+                    <div className="space-y-3">
+                      <label className="text-[10px] font-black text-[var(--text-muted)] uppercase tracking-[0.2em]">Contact Phone</label>
                       <div className="relative">
-                        <Phone size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
+                        <Phone size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--text-muted)]" />
                         <input 
                           type="text" 
-                          className="w-full bg-gray-800 border border-gray-700 rounded-xl py-3 pl-10 pr-3 text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                          className="w-full bg-[var(--bg-input)] border border-[var(--border-color)] rounded-2xl py-4 pl-12 pr-4 text-[var(--text-main)] focus:ring-2 focus:ring-blue-500 outline-none transition-all font-bold"
                           value={profile.phone}
                           onChange={(e) => setProfile({...profile, phone: e.target.value})}
-                          placeholder="Phone Number"
+                          placeholder="e.g. 0300-1234567"
                         />
                       </div>
                     </div>
-                    <div className="md:col-span-2 space-y-2">
-                      <label className="text-xs font-bold text-gray-500 uppercase tracking-widest">Factory Address</label>
+                    <div className="md:col-span-2 space-y-3">
+                      <label className="text-[10px] font-black text-[var(--text-muted)] uppercase tracking-[0.2em]">Factory Address</label>
                       <div className="relative">
-                        <MapPin size={18} className="absolute left-3 top-4 text-gray-500" />
+                        <MapPin size={18} className="absolute left-4 top-5 text-[var(--text-muted)]" />
                         <textarea 
                           rows="3"
-                          className="w-full bg-gray-800 border border-gray-700 rounded-xl py-3 pl-10 pr-3 text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                          className="w-full bg-[var(--bg-input)] border border-[var(--border-color)] rounded-2xl py-4 pl-12 pr-4 text-[var(--text-main)] focus:ring-2 focus:ring-blue-500 outline-none transition-all font-bold"
                           value={profile.address}
                           onChange={(e) => setProfile({...profile, address: e.target.value})}
-                          placeholder="Full Address"
+                          placeholder="Enter your full factory address..."
                         />
                       </div>
                     </div>
                   </div>
-                  <button type="submit" disabled={loading} className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-xl transition-all shadow-lg shadow-blue-600/20 disabled:opacity-50">
+                  <button type="submit" disabled={loading} className="flex items-center space-x-3 bg-blue-600 hover:bg-blue-700 text-white font-black px-10 py-4 rounded-2xl transition-all shadow-lg shadow-blue-600/20 disabled:opacity-50 uppercase tracking-widest text-xs">
                     <Save size={18} />
-                    <span>{loading ? 'Saving...' : 'Update Profile'}</span>
+                    <span>{loading ? 'Saving...' : 'Update Factory Profile'}</span>
                   </button>
                 </form>
               </div>

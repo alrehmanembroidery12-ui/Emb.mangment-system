@@ -120,23 +120,23 @@ const Workers = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8 animate-in fade-in duration-700">
       {/* Page Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-3xl font-bold text-white">Worker Management</h1>
-          <p className="text-gray-500 text-sm mt-1">Manage your factory workforce and salary settings</p>
+          <h1 className="text-2xl font-bold tracking-tight text-[var(--text-main)]">Worker Management</h1>
+          <p className="text-[var(--text-muted)] text-xs mt-1 opacity-70">Manage your factory workforce and salary settings</p>
         </div>
         <div className="flex space-x-3">
           <button 
             onClick={handleGenerateSalary}
             disabled={loadingSalary}
-            className={`flex items-center space-x-2 px-6 py-2.5 rounded-xl font-semibold transition-all shadow-lg ${
-              loadingSalary ? 'bg-gray-700 text-gray-500 cursor-not-allowed' : 'bg-green-600 hover:bg-green-700 text-white shadow-green-600/20'
+            className={`flex items-center space-x-2 px-5 py-2.5 rounded-xl font-bold transition-all text-[10px] uppercase tracking-widest ${
+              loadingSalary ? 'bg-gray-700 text-gray-500 cursor-not-allowed' : 'bg-green-600 hover:bg-green-700 text-white shadow-lg shadow-green-600/20'
             }`}
           >
-            <Wallet size={18} />
-            <span>{loadingSalary ? 'Processing...' : 'Generate Monthly Salary'}</span>
+            <Wallet size={16} />
+            <span>{loadingSalary ? 'Processing...' : 'Generate Salary'}</span>
           </button>
           <button 
             onClick={() => {
@@ -144,29 +144,29 @@ const Workers = () => {
               setFormData({ name: '', phone: '', salary_type: 'Fixed', base_salary: '', bonus: '', advance: '' });
               setShowModal(true);
             }}
-            className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 px-6 py-2.5 rounded-xl font-semibold transition-all shadow-lg shadow-blue-600/20"
+            className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-bold transition-all shadow-lg shadow-blue-600/20 text-[10px] uppercase tracking-widest"
           >
-            <Plus size={18} />
-            <span>Add New Worker</span>
+            <Plus size={16} />
+            <span>Add Worker</span>
           </button>
         </div>
       </div>
 
       {/* Search and Filters */}
-      <div className="flex flex-col md:flex-row gap-4 bg-gray-900/50 p-4 rounded-2xl border border-gray-800">
+      <div className="flex flex-col md:flex-row gap-4 bg-[var(--bg-card)] p-5 rounded-3xl border border-[var(--border-color)] shadow-[var(--shadow)]">
         <div className="relative flex-1">
-          <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
+          <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--text-muted)]" />
           <input 
             type="text" 
             placeholder="Search by name or phone..."
-            className="w-full bg-gray-800 border border-gray-700 rounded-xl py-2.5 pl-10 pr-10 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+            className="w-full bg-[var(--bg-input)] border border-[var(--border-color)] rounded-2xl py-3 pl-11 pr-10 text-[var(--text-main)] focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all font-medium"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
           {searchTerm && (
             <button 
               onClick={() => setSearchTerm('')}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white"
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-[var(--text-muted)] hover:text-[var(--text-main)]"
             >
               &times;
             </button>
@@ -174,7 +174,7 @@ const Workers = () => {
         </div>
         <div className="flex gap-2">
           <select 
-            className="bg-gray-800 border border-gray-700 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
+            className="bg-[var(--bg-input)] border border-[var(--border-color)] rounded-2xl px-5 py-3 text-[var(--text-main)] focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer font-bold"
             value={filterType}
             onChange={(e) => setFilterType(e.target.value)}
           >
@@ -182,77 +182,77 @@ const Workers = () => {
             <option value="Fixed">Fixed Salary</option>
             <option value="Piece-rate">Piece-rate</option>
           </select>
-          <button className="bg-gray-800 border border-gray-700 rounded-xl px-4 py-2.5 text-gray-400 hover:text-white transition-colors">
+          <button className="bg-[var(--bg-input)] border border-[var(--border-color)] rounded-2xl px-5 py-3 text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors">
             <Filter size={18} />
           </button>
         </div>
       </div>
 
       {/* Workers Grid/Table */}
-      <div className="bg-gray-900 border border-gray-800 rounded-2xl overflow-x-auto shadow-2xl">
-        <table className="w-full text-left border-collapse">
+      <div className="overflow-x-auto pb-4">
+        <table className="modern-table">
           <thead>
-            <tr className="bg-gray-800/50 text-gray-400 text-xs font-bold uppercase tracking-wider">
+            <tr>
               <th className="px-6 py-4">Worker Info</th>
               <th className="px-6 py-4">Salary Type</th>
-              <th className="px-6 py-4">Salary</th>
-              <th className="px-6 py-4">Total Bonus</th>
-              <th className="px-6 py-4">Total Advance</th>
-              <th className="px-6 py-4">Balance</th>
+              <th className="px-6 py-4">Base Salary</th>
+              <th className="px-6 py-4">Bonus</th>
+              <th className="px-6 py-4">Advance</th>
+              <th className="px-6 py-4">Total Balance</th>
               <th className="px-6 py-4">Status</th>
               <th className="px-6 py-4 text-right">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-800">
+          <tbody>
             {filteredWorkers.map((worker) => (
-              <tr key={worker.id} className="hover:bg-gray-800/30 transition-colors group">
+              <tr key={worker.id} className="group">
                 <td className="px-6 py-5">
-                  <div className="flex items-center space-x-3">
-                    <div className="h-10 w-10 rounded-full bg-gradient-to-br from-gray-700 to-gray-800 flex items-center justify-center font-bold text-blue-400">
+                  <div className="flex items-center space-x-4">
+                    <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center font-black text-white shadow-lg shadow-blue-500/20">
                       {worker.name[0]}
                     </div>
                     <div>
-                      <p className="text-white font-semibold">{worker.name}</p>
-                      <p className="text-gray-500 text-xs">{worker.phone}</p>
+                      <p className="text-[var(--text-main)] font-bold tracking-tight text-sm">{worker.name}</p>
+                      <p className="text-[var(--text-muted)] text-[9px] font-bold uppercase tracking-widest mt-0.5">{worker.phone}</p>
                     </div>
                   </div>
                 </td>
                 <td className="px-6 py-5">
-                  <span className={`px-3 py-1 rounded-full text-xs font-bold ${
-                    worker.salary_type === 'Fixed' ? 'bg-blue-600/10 text-blue-400' : 'bg-purple-600/10 text-purple-400'
+                  <span className={`px-2.5 py-1 rounded-lg text-[9px] font-bold uppercase tracking-wider border ${
+                    worker.salary_type === 'Fixed' ? 'bg-blue-600/10 text-blue-500 border-blue-600/20' : 'bg-purple-600/10 text-purple-500 border-purple-600/20'
                   }`}>
                     {worker.salary_type}
                   </span>
                 </td>
-                <td className="px-6 py-5 font-medium text-white">₨ {worker.base_salary}</td>
-                <td className="px-6 py-5 font-medium text-green-400">₨ {worker.total_bonus || 0}</td>
-                <td className="px-6 py-5 font-medium text-red-400">₨ {worker.total_advance || 0}</td>
-                <td className="px-6 py-5 font-bold text-blue-400">₨ {worker.balance || 0}</td>
+                <td className="px-6 py-5 font-bold text-[var(--text-main)] text-sm tracking-tight">₨ {parseFloat(worker.base_salary).toLocaleString()}</td>
+                <td className="px-6 py-5 font-bold text-green-500 text-sm tracking-tight">₨ {parseFloat(worker.total_bonus || 0).toLocaleString()}</td>
+                <td className="px-6 py-5 font-bold text-red-500 text-sm tracking-tight">₨ {parseFloat(worker.total_advance || 0).toLocaleString()}</td>
+                <td className="px-6 py-5 font-bold text-blue-500 text-base tracking-tight">₨ {parseFloat(worker.balance || 0).toLocaleString()}</td>
                 <td className="px-6 py-5">
-                  <span className={`flex items-center space-x-1.5 ${worker.is_active ? 'text-green-500' : 'text-gray-500'}`}>
+                  <span className={`flex items-center space-x-2 ${worker.is_active ? 'text-green-500' : 'text-[var(--text-muted)]'}`}>
                     <span className={`h-1.5 w-1.5 rounded-full ${worker.is_active ? 'bg-green-500 animate-pulse' : 'bg-gray-500'}`}></span>
-                    <span className="text-xs font-bold uppercase">{worker.is_active ? 'Active' : 'Inactive'}</span>
+                    <span className="text-[9px] font-bold uppercase tracking-widest">{worker.is_active ? 'Active' : 'Inactive'}</span>
                   </span>
                 </td>
                 <td className="px-6 py-5 text-right">
-                  <div className="flex justify-end space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="flex justify-end space-x-2">
                     <button 
                       onClick={() => { 
                         setSelectedWorker(worker); 
                         fetchTransactions(worker.id, historyMonth, historyYear); 
                         setShowHistoryModal(true); 
                       }}
-                      className="p-2 text-yellow-500 hover:bg-yellow-500/10 rounded-lg"
+                      className="p-3 text-yellow-500 hover:bg-yellow-500/10 rounded-xl transition-all border border-transparent hover:border-yellow-500/20"
                       title="View History"
                     >
-                      <History size={16} />
+                      <History size={18} />
                     </button>
                     <button 
                       onClick={() => { setSelectedWorker(worker); setShowTransactionModal(true); }}
-                      className="p-2 text-green-500 hover:bg-green-500/10 rounded-lg"
+                      className="p-3 text-green-500 hover:bg-green-500/10 rounded-xl transition-all border border-transparent hover:border-green-500/20"
                       title="Quick Bonus/Advance"
                     >
-                      <Wallet size={16} />
+                      <Wallet size={18} />
                     </button>
                     <button 
                       onClick={() => { 
@@ -264,10 +264,10 @@ const Workers = () => {
                         }); 
                         setShowModal(true); 
                       }}
-                      className="p-2 text-blue-400 hover:bg-blue-600/10 rounded-lg"
+                      className="p-3 text-blue-500 hover:bg-blue-600/10 rounded-xl transition-all border border-transparent hover:border-blue-500/20"
                       title="Edit Worker"
                     >
-                      <Edit2 size={16} />
+                      <Edit2 size={18} />
                     </button>
                   </div>
                 </td>
@@ -279,19 +279,19 @@ const Workers = () => {
 
       {/* Main Worker Modal */}
       {showModal && (
-        <div className="fixed inset-0 bg-gray-950/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-gray-900 p-8 rounded-3xl w-full max-w-lg border border-gray-800 shadow-2xl scale-in-center">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center p-4 z-50">
+          <div className="bg-[var(--bg-card)] p-8 rounded-[2rem] w-full max-w-lg border border-[var(--border-color)] shadow-2xl animate-in zoom-in duration-300">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold text-white">{selectedWorker ? 'Update Worker' : 'New Worker'}</h2>
-              <button onClick={() => {setShowModal(false); setSelectedWorker(null);}} className="text-gray-500 hover:text-white text-3xl">&times;</button>
+              <h2 className="text-xl font-bold tracking-tight text-[var(--text-main)]">{selectedWorker ? 'Update Worker' : 'New Worker'}</h2>
+              <button onClick={() => {setShowModal(false); setSelectedWorker(null);}} className="text-[var(--text-muted)] hover:text-[var(--text-main)] text-2xl">&times;</button>
             </div>
-            <form onSubmit={handleSubmit} className="space-y-5">
-              <div className="grid grid-cols-2 gap-4">
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="grid grid-cols-2 gap-5">
                 <div className="col-span-2">
-                  <label className="block text-xs font-bold text-gray-500 uppercase mb-2">Worker Name</label>
+                  <label className="block text-[10px] font-black text-[var(--text-muted)] uppercase tracking-widest mb-2">Worker Name</label>
                   <input 
                     type="text" 
-                    className="w-full bg-gray-800 border border-gray-700 rounded-xl p-3 text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                    className="w-full bg-[var(--bg-input)] border border-[var(--border-color)] rounded-2xl p-4 text-[var(--text-main)] focus:ring-2 focus:ring-blue-500 outline-none transition-all font-bold"
                     placeholder="e.g. Muhammad Ali"
                     value={formData.name}
                     onChange={(e) => setFormData({...formData, name: e.target.value})}
@@ -299,19 +299,19 @@ const Workers = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-gray-500 uppercase mb-2">Phone</label>
+                  <label className="block text-[10px] font-black text-[var(--text-muted)] uppercase tracking-widest mb-2">Phone</label>
                   <input 
                     type="text" 
-                    className="w-full bg-gray-800 border border-gray-700 rounded-xl p-3 text-white focus:ring-2 focus:ring-blue-500 outline-none"
+                    className="w-full bg-[var(--bg-input)] border border-[var(--border-color)] rounded-2xl p-4 text-[var(--text-main)] focus:ring-2 focus:ring-blue-500 outline-none font-bold"
                     placeholder="0300-1234567"
                     value={formData.phone}
                     onChange={(e) => setFormData({...formData, phone: e.target.value})}
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-gray-500 uppercase mb-2">Salary Type</label>
+                  <label className="block text-[10px] font-black text-[var(--text-muted)] uppercase tracking-widest mb-2">Salary Type</label>
                   <select 
-                    className="w-full bg-gray-800 border border-gray-700 rounded-xl p-3 text-white focus:ring-2 focus:ring-blue-500 outline-none"
+                    className="w-full bg-[var(--bg-input)] border border-[var(--border-color)] rounded-2xl p-4 text-[var(--text-main)] focus:ring-2 focus:ring-blue-500 outline-none font-bold cursor-pointer"
                     value={formData.salary_type}
                     onChange={(e) => setFormData({...formData, salary_type: e.target.value})}
                   >
@@ -320,26 +320,26 @@ const Workers = () => {
                   </select>
                 </div>
                 <div className="col-span-2">
-                  <label className="block text-xs font-bold text-gray-500 uppercase mb-2">Base Salary (₨)</label>
+                  <label className="block text-[10px] font-black text-[var(--text-muted)] uppercase tracking-widest mb-2">Base Salary (₨)</label>
                   <input 
                     type="number" 
-                    className="w-full bg-gray-800 border border-gray-700 rounded-xl p-3 text-white focus:ring-2 focus:ring-blue-500 outline-none"
+                    className="w-full bg-[var(--bg-input)] border border-[var(--border-color)] rounded-2xl p-4 text-[var(--text-main)] focus:ring-2 focus:ring-blue-500 outline-none font-black text-xl"
                     value={formData.base_salary}
                     onChange={(e) => setFormData({...formData, base_salary: e.target.value})}
                   />
                 </div>
               </div>
-              <div className="flex gap-4 mt-8">
+              <div className="flex gap-4 mt-10">
                 <button 
                   type="button" 
                   onClick={() => {setShowModal(false); setSelectedWorker(null);}}
-                  className="flex-1 px-6 py-3 rounded-xl font-bold text-gray-400 hover:bg-gray-800 transition-all"
+                  className="flex-1 px-6 py-4 rounded-2xl font-bold text-[var(--text-muted)] hover:bg-[var(--bg-input)] transition-all"
                 >
                   Cancel
                 </button>
                 <button 
                   type="submit"
-                  className="flex-1 bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-3 rounded-xl font-bold text-white shadow-lg shadow-blue-600/20 hover:opacity-90 transition-all"
+                  className="flex-1 bg-blue-600 px-6 py-4 rounded-2xl font-bold text-white shadow-lg shadow-blue-600/20 hover:opacity-90 transition-all"
                 >
                   {selectedWorker ? 'Update Worker' : 'Save Worker'}
                 </button>

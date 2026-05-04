@@ -1,50 +1,78 @@
 @import "tailwindcss";
 
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
-  font-weight: 400;
+  font-weight: 500;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Dark Theme (Default) */
+/* Dark Theme (Premium Purple/Navy) */
 :root.dark {
-  --bg-main: #030712;
-  --bg-sidebar: #090e1a;
-  --bg-card: #111827;
-  --bg-input: #1f2937;
+  --bg-outer: #1c1c30; /* The "Border Patti" color */
+  --bg-main: #13111c;
+  --bg-sidebar: #13111c;
+  --bg-card: rgba(26, 26, 46, 0.8);
+  --bg-input: rgba(255, 255, 255, 0.05);
   --text-main: #ffffff;
-  --text-muted: #9ca3af;
-  --border-color: #1f2937;
-  --accent-color: #2563eb;
-  --accent-hover: #1d4ed8;
-  --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+  --text-muted: #94a3b8;
+  --border-color: rgba(255, 255, 255, 0.1);
+  --accent-color: #7c3aed; /* Purple primary */
+  --accent-hover: #6d28d9;
+  --shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  
+  /* Gradient Palette */
+  --grad-1: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+  --grad-2: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+  --grad-3: linear-gradient(135deg, #f43f5e 0%, #fb923c 100%);
 }
 
 /* Light Theme (Premium) */
 :root.light {
-  --bg-main: #f8fafc;
-  --bg-sidebar: #ffffff;
+  --bg-outer: #f1f5f9;
+  --bg-main: #ffffff;
+  --bg-sidebar: #f8fafc;
   --bg-card: #ffffff;
   --bg-input: #f1f5f9;
-  --text-main: #0f172a;
+  --text-main: #1e293b;
   --text-muted: #64748b;
   --border-color: #e2e8f0;
-  --accent-color: #84cc16; /* Lime Green accent from screenshot */
-  --accent-hover: #65a30d;
-  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  --accent-color: #7c3aed; 
+  --accent-hover: #6d28d9;
+  --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
+  
+  /* Light Mode Gradients - Vibrant but balanced */
+  --grad-1: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+  --grad-2: linear-gradient(135deg, #0891b2 0%, #0ea5e9 100%);
+  --grad-3: linear-gradient(135deg, #e11d48 0%, #f43f5e 100%);
 }
 
 body {
   margin: 0;
-  background-color: var(--bg-main);
+  background-color: var(--bg-outer);
   color: var(--text-main);
   transition: background-color 0.3s ease, color 0.3s ease;
   min-width: 320px;
   min-height: 100vh;
+  padding: 12px; /* Reduced padding for the frame */
+}
+
+.dark body {
+  background-image: radial-gradient(circle at top right, rgba(124, 58, 237, 0.05), transparent),
+                    radial-gradient(circle at bottom left, rgba(6, 182, 212, 0.05), transparent);
+}
+
+#root {
+  width: 100%;
+  min-height: calc(100vh - 24px);
+  background-color: var(--bg-main);
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 0 0 1px var(--border-color), 0 20px 60px -20px rgba(0,0,0,0.5);
+  display: flex;
 }
 
 /* Premium Card Hover Effect */
@@ -61,8 +89,82 @@ body {
   box-shadow: 0 20px 25px -5px rgba(132, 204, 22, 0.1), 0 10px 10px -5px rgba(132, 204, 22, 0.04);
 }
 
-#root {
+/* Modern Table Styles */
+.modern-table {
   width: 100%;
-  min-height: 100vh;
+  border-collapse: separate;
+  border-spacing: 0 8px;
 }
+
+.modern-table thead tr {
+  background-color: var(--bg-input);
+  color: var(--text-muted);
+}
+
+.modern-table th {
+  padding: 16px 24px;
+  font-size: 10px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.modern-table th:first-child { border-radius: 12px 0 0 12px; }
+.modern-table th:last-child { border-radius: 0 12px 12px 0; }
+
+.modern-table tbody tr {
+  background-color: var(--bg-card);
+  transition: all 0.2s ease;
+  box-shadow: var(--shadow);
+}
+
+.modern-table tbody tr:hover {
+  transform: scale(1.01);
+  background-color: var(--bg-input);
+}
+
+.modern-table td {
+  padding: 20px 24px;
+}
+
+.modern-table td:first-child { border-radius: 12px 0 0 12px; }
+.modern-table td:last-child { border-radius: 0 12px 12px 0; }
+
+/* Glassmorphism & Premium Utilities */
+.glass-card {
+  background: var(--bg-card);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow);
+}
+
+.grad-text {
+  background: var(--grad-1);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.bg-grad-1 { background: var(--grad-1); }
+.bg-grad-2 { background: var(--grad-2); }
+.bg-grad-3 { background: var(--grad-3); }
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
 
