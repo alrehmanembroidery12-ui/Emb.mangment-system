@@ -1,6 +1,8 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
 const db = require('../config/db');
+const emailService = require('../utils/emailService');
 
 // Register User & Factory
 exports.register = async (req, res) => {
@@ -24,30 +26,27 @@ exports.register = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    // 3. Create Admin User
+    // 3. Generate Verification Token
+    const verificationToken = crypto.randomBytes(32).toString('hex');
+
+    // 4. Create Admin User (Default Unverified)
     const userResult = await db.query(
-      'INSERT INTO users (full_name, email, password, role, factory_id) VALUES ($1, $2, $3, $4, $5) RETURNING id, full_name, email, role, factory_id',
-      [full_name, email, hashedPassword, 'Admin', factoryId]
+      'INSERT INTO users (full_name, email, password, role, factory_id, verification_token, is_verified) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id, full_name, email, role, factory_id',
+      [full_name, email, hashedPassword, 'Admin', factoryId, verificationToken, false]
     );
 
     const user = userResult.rows[0];
 
-    // 4. Create JWT
-    const token = jwt.sign(
-      { 
-        id: user.id, 
-        role: user.role, 
-        factory_id: user.factory_id,
-        is_demo: false,
-        is_readonly: false
-      },
-      process.env.JWT_SECRET || 'your_jwt_secret',
-      { expiresIn: '1d' }
-    );
+    // 5. Send Verification Email
+    try {
+        await emailService.sendVerificationEmail(email, verificationToken, full_name);
+    } catch (emailErr) {
+        console.error('Email could not be sent, but user was created:', emailErr);
+    }
 
     res.status(201).json({ 
-      token, 
-      user: { ...user, is_demo: false, is_readonly: false } 
+      message: 'Registration successful! Please check your email to verify your account.',
+      user: { ...user, is_verified: false } 
     });
   } catch (err) {
     console.error('Registration Error Details:', err);
@@ -69,13 +68,19 @@ exports.login = async (req, res) => {
     const user = result.rows[0];
 
     if (!user) {
-      console.log('Login failed: User not found:', email);
       return res.status(400).json({ message: 'User not found. Please register first.' });
+    }
+
+    // Check if verified
+    if (!user.is_verified) {
+      return res.status(401).json({ 
+        message: 'Your email is not verified. Please check your inbox for the verification link.',
+        unverified: true 
+      });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      console.log('Login failed: Password mismatch for:', email);
       return res.status(400).json({ message: 'Incorrect password. Please try again.' });
     }
 
@@ -104,15 +109,28 @@ exports.login = async (req, res) => {
       }
     });
   } catch (err) {
-    console.error('CRITICAL LOGIN ERROR:', {
-      message: err.message,
-      stack: err.stack,
-      email: email
-    });
-    res.status(500).json({ 
-      message: 'Server Error during login', 
-      error: err.message,
-      details: process.env.NODE_ENV === 'development' ? err.stack : undefined
-    });
+    console.error('CRITICAL LOGIN ERROR:', err);
+    res.status(500).json({ message: 'Server Error during login', error: err.message });
   }
+};
+
+// Verify Email
+exports.verifyEmail = async (req, res) => {
+    const { token } = req.params;
+    
+    try {
+        const result = await db.query(
+            'UPDATE users SET is_verified = TRUE, verification_token = NULL WHERE verification_token = $1 RETURNING id',
+            [token]
+        );
+        
+        if (result.rows.length === 0) {
+            return res.status(400).json({ message: 'Invalid or expired verification token.' });
+        }
+        
+        res.json({ message: 'Email verified successfully! You can now login.' });
+    } catch (err) {
+        console.error('Verification Error:', err);
+        res.status(500).json({ message: 'Server Error during verification' });
+    }
 };

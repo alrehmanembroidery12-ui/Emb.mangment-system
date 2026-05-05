@@ -10,6 +10,7 @@ import Inventory from './pages/Inventory';
 import Billing from './pages/Billing';
 import Machines from './pages/Machines';
 import Settings from './pages/Settings';
+import VerifyEmail from './pages/VerifyEmail';
 import Layout from './components/Layout';
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
@@ -31,6 +32,7 @@ function App() {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/verify-email/:token" element={<VerifyEmail />} />
           <Route 
             path="/*" 
             element={

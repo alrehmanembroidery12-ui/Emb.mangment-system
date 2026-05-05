@@ -10,19 +10,42 @@ const Register = () => {
     factory_name: ''
   });
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const { register } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setSuccess('');
     const res = await register(formData);
     if (res.success) {
-      navigate('/dashboard');
+      setSuccess(res.message || 'Registration successful! Please check your email.');
     } else {
       setError(res.message);
     }
   };
+
+  if (success) {
+    return (
+      <div className="min-h-screen w-full flex items-center justify-center bg-gray-900 px-4 py-12">
+        <div className="max-w-md w-full space-y-8 bg-gray-800 p-10 rounded-2xl shadow-2xl border border-gray-700 text-center">
+          <div className="flex justify-center">
+             <div className="w-16 h-16 bg-green-500/10 rounded-full flex items-center justify-center mb-4">
+                <svg className="w-8 h-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                </svg>
+             </div>
+          </div>
+          <h2 className="text-2xl font-bold text-white mb-2">Check Your Email</h2>
+          <p className="text-gray-400 mb-6">{success}</p>
+          <Link to="/login" className="inline-block w-full py-2 px-4 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-md transition-colors">
+            Back to Login
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-gray-900 px-4 py-12">
@@ -39,7 +62,7 @@ const Register = () => {
           </p>
         </div>
         <form className="mt-8 space-y-4" onSubmit={handleSubmit}>
-          {error && <div className="text-red-500 text-sm text-center">{error}</div>}
+          {error && <div className="text-red-500 text-sm text-center bg-red-500/10 py-2 rounded-md border border-red-500/20">{error}</div>}
           <div className="space-y-4">
             <input
               type="text"
