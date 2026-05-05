@@ -50,14 +50,16 @@ const TopBar = ({ onMenuClick }) => {
                DEMO MODE
              </span>
            )}
-           <button 
-             onClick={handleResetDemo}
-             className="flex items-center px-3 lg:px-4 py-1.5 rounded-xl bg-[var(--bg-input)] hover:bg-purple-500/10 text-[var(--text-muted)] hover:text-purple-500 border border-[var(--border-color)] hover:border-purple-500/30 transition-all text-[10px] font-black uppercase tracking-widest"
-             title="Reset Data"
-           >
-             <RefreshCcw size={14} className="lg:mr-2" />
-             <span className="hidden lg:inline">Reset</span>
-           </button>
+           {user?.is_demo && (
+             <button 
+               onClick={handleResetDemo}
+               className="flex items-center px-3 lg:px-4 py-1.5 rounded-xl bg-[var(--bg-input)] hover:bg-purple-500/10 text-[var(--text-muted)] hover:text-purple-500 border border-[var(--border-color)] hover:border-purple-500/30 transition-all text-[10px] font-black uppercase tracking-widest"
+               title="Reset Data"
+             >
+               <RefreshCcw size={14} className="lg:mr-2" />
+               <span className="hidden lg:inline">Reset</span>
+             </button>
+           )}
         </div>
 
         <div className="h-8 w-[1px] bg-[var(--border-color)] hidden sm:block"></div>
