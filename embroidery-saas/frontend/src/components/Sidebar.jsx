@@ -24,12 +24,12 @@ const Sidebar = ({ isOpen, onClose }) => {
   const { isDarkMode, toggleTheme } = useTheme();
 
   const menuItems = [
-    { name: 'Dashboard', icon: <LayoutDashboard size={20} />, path: '/dashboard', roles: ['Admin', 'Manager', 'Operator'] },
-    { name: 'Workers', icon: <Users size={20} />, path: '/workers', roles: ['Admin', 'Manager'] },
-    { name: 'Machines', icon: <Cpu size={20} />, path: '/machines', roles: ['Admin', 'Manager', 'Operator'] },
-    { name: 'Orders', icon: <ShoppingCart size={20} />, path: '/orders', roles: ['Admin', 'Manager', 'Operator'] },
-    { name: 'Inventory', icon: <Package size={20} />, path: '/inventory', roles: ['Admin', 'Manager'] },
-    { name: 'Billing', icon: <CreditCard size={20} />, path: '/billing', roles: ['Admin', 'Manager'] },
+    { name: 'Dashboard', icon: <LayoutDashboard size={20} />, path: '/dashboard', roles: ['Admin', 'Accountant', 'Operator'] },
+    { name: 'Workers', icon: <Users size={20} />, path: '/workers', roles: ['Admin', 'Accountant', 'Operator'] },
+    { name: 'Machines', icon: <Cpu size={20} />, path: '/machines', roles: ['Admin', 'Accountant', 'Operator'] },
+    { name: 'Orders', icon: <ShoppingCart size={20} />, path: '/orders', roles: ['Admin', 'Accountant', 'Operator'] },
+    { name: 'Inventory', icon: <Package size={20} />, path: '/inventory', roles: ['Admin', 'Accountant', 'Operator'] },
+    { name: 'Billing', icon: <CreditCard size={20} />, path: '/billing', roles: ['Admin', 'Accountant', 'Operator'] },
     { name: 'Settings', icon: <Settings size={20} />, path: '/settings', roles: ['Admin'] },
   ];
 

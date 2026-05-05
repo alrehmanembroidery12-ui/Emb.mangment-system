@@ -41,7 +41,7 @@ function App() {
                     <Route 
                       path="workers" 
                       element={
-                        <ProtectedRoute allowedRoles={['Admin', 'Manager']}>
+                        <ProtectedRoute allowedRoles={['Admin', 'Accountant', 'Operator']}>
                           <Workers />
                         </ProtectedRoute>
                       } 
@@ -51,7 +51,7 @@ function App() {
                     <Route 
                       path="inventory" 
                       element={
-                        <ProtectedRoute allowedRoles={['Admin', 'Manager']}>
+                        <ProtectedRoute allowedRoles={['Admin', 'Accountant', 'Operator']}>
                           <Inventory />
                         </ProtectedRoute>
                       } 
@@ -59,7 +59,7 @@ function App() {
                     <Route 
                       path="billing" 
                       element={
-                        <ProtectedRoute allowedRoles={['Admin', 'Manager']}>
+                        <ProtectedRoute allowedRoles={['Admin', 'Accountant', 'Operator']}>
                           <Billing />
                         </ProtectedRoute>
                       } 
