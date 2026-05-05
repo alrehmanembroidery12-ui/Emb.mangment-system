@@ -11,6 +11,8 @@ import Billing from './pages/Billing';
 import Machines from './pages/Machines';
 import Settings from './pages/Settings';
 import VerifyEmail from './pages/VerifyEmail';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
 import Layout from './components/Layout';
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
@@ -33,6 +35,8 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/verify-email/:token" element={<VerifyEmail />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password/:token" element={<ResetPassword />} />
           <Route 
             path="/*" 
             element={

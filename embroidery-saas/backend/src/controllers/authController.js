@@ -134,3 +134,61 @@ exports.verifyEmail = async (req, res) => {
         res.status(500).json({ message: 'Server Error during verification' });
     }
 };
+
+// Forgot Password
+exports.forgotPassword = async (req, res) => {
+    const { email } = req.body;
+    try {
+        const userResult = await db.query('SELECT id, full_name FROM users WHERE email = $1', [email]);
+        if (userResult.rows.length === 0) {
+            return res.status(404).json({ message: 'No account found with that email address.' });
+        }
+
+        const user = userResult.rows[0];
+        const resetToken = crypto.randomBytes(32).toString('hex');
+        const resetExpires = new Date(Date.now() + 3600000); // 1 hour
+
+        await db.query(
+            'UPDATE users SET reset_password_token = $1, reset_password_expires = $2 WHERE id = $3',
+            [resetToken, resetExpires, user.id]
+        );
+
+        await emailService.sendPasswordResetEmail(email, resetToken, user.full_name);
+
+        res.json({ message: 'Password reset link sent to your email.' });
+    } catch (err) {
+        console.error('Forgot Password Error:', err);
+        res.status(500).json({ message: 'Server Error' });
+    }
+};
+
+// Reset Password
+exports.resetPassword = async (req, res) => {
+    const { token } = req.params;
+    const { password } = req.body;
+
+    try {
+        const userResult = await db.query(
+            'SELECT id FROM users WHERE reset_password_token = $1 AND reset_password_expires > NOW()',
+            [token]
+        );
+
+        if (userResult.rows.length === 0) {
+            return res.status(400).json({ message: 'Password reset token is invalid or has expired.' });
+        }
+
+        const user = userResult.rows[0];
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
+
+        await db.query(
+            'UPDATE users SET password = $1, reset_password_token = NULL, reset_password_expires = NULL WHERE id = $2',
+            [hashedPassword, user.id]
+        );
+
+        res.json({ message: 'Password has been reset successfully. You can now login.' });
+    } catch (err) {
+        console.error('Reset Password Error:', err);
+        res.status(500).json({ message: 'Server Error' });
+    }
+};
