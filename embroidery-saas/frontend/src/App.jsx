@@ -14,6 +14,7 @@ import VerifyEmail from './pages/VerifyEmail';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import Layout from './components/Layout';
+import CoreLogicBranding from './components/CoreLogicBranding';
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const { token, user } = useAuth();
@@ -85,6 +86,7 @@ function App() {
             } 
           />
         </Routes>
+        <CoreLogicBranding />
       </Router>
       </AuthProvider>
     </ThemeProvider>
